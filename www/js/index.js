@@ -39,7 +39,7 @@ class AppPage extends React.Component {
     renderToolbar() {
         return (
             <Ons.Toolbar>
-              <div className='center'>Lighthouse</div>
+              <div className='center'>LightHouseSg</div>
               <div className='right'>
               <Ons.ToolbarButton>
                 <Ons.Icon icon='ion-navicon, material:md-menu'></Ons.Icon>

@@ -1,4 +1,4 @@
-# LighthouseSg
+# LightHouseSg
 Hybrid mobile application built on [Apache Cordova](https://cordova.apache.org/docs/en/latest/) . Uses [ReactJS](https://facebook.github.io/react/) and [OnsenUI](https://onsen.io/).
 
 
