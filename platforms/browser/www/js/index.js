@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import * as Ons from 'react-onsenui';
-import * as ons from 'onsenui';
+
+import { AppPage } from './AppPage';
 
 
 var app = {
@@ -26,43 +26,3 @@ var app = {
 };
 
 app.initialize();
-
-
-/* (sample) First page to be displayed */
-class AppPage extends React.Component {
-
-    constructor() {
-        super();
-        // Do nothing for now
-    }
-
-    renderToolbar() {
-        return (
-            <Ons.Toolbar>
-              <div className='center'>Lighthouse</div>
-              <div className='right'>
-              <Ons.ToolbarButton>
-                <Ons.Icon icon='ion-navicon, material:md-menu'></Ons.Icon>
-              </Ons.ToolbarButton>
-              </div>
-            </Ons.Toolbar>
-          );
-    }
-
-    handleClick() {
-        ons.notification.alert('Hello world!');
-    }
-
-    render() {
-        return (
-            <Ons.Page renderToolbar={this.renderToolbar}>
-                <p style={{ textAlign: 'center' }}>
-                    <Ons.Button onClick={this.handleClick}>
-                        Click me
-              </Ons.Button>
-                </p>
-            </Ons.Page>
-        )
-    }
-
-}

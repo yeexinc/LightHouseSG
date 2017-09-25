@@ -1,0 +1,14 @@
+/* Declare your own CSS styling here */
+
+.center {
+    text-align:center;
+}
+
+.mainPage {
+    background-color: pink;
+}
+
+.logout {
+    color: darkcyan;
+    cursor: pointer;
+}
