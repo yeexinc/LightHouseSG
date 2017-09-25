@@ -27,7 +27,7 @@ export class MainPage extends React.Component {
     }
 
     logout() {
-        this.navigator.resetPage({ component: AppPage, key: 'app-page', animation: 'slide' });
+        this.navigator.resetPage({ component: AppPage, key: 'app-page' });
     }
 
     renderToolbar() {
