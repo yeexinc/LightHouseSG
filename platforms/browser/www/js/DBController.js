@@ -17,7 +17,7 @@ export class DBController extends React.Component {
         /*
         $.ajax({
             type: "POST",
-            dataType: "json",
+            dataType: "jsonp",
             crossDomain: true,
             url: "http://45.76.189.70:5000/api/v1.0/account/login",
             contentType: "application/x-www-form-urlencoded",

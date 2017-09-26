@@ -47,9 +47,9 @@ export class LoginPage extends React.Component {
     render() {
         return (
             <Ons.Page renderToolbar={this.renderToolbar.bind(this)}>
-                <div className="center">
+                <div className="pageContent center">
                 <Ons.Input placeholder="Username" modifier="underbar"></Ons.Input>
-                <br/><br/>
+                <br/>
                 <Ons.Input placeholder="Password" modifier="underbar"></Ons.Input>
                 <br/><br/>
                 <Ons.Button onClick={this.handleLogin.bind(this)}>Login</Ons.Button>

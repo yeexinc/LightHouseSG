@@ -57,8 +57,8 @@ class IndexPage extends React.Component {
 
     render() {
         return (
-            <Ons.Page renderToolbar={this.renderToolbar.bind(this)}>
-                <div className="center">
+            <Ons.Page renderToolbar={this.renderToolbar.bind(this)} className="page">
+                <div className="pageContent center">
                     <p>text here</p>
                 <Ons.Button onClick={this.pushLoginPage.bind(this)}>
                     Login

@@ -35,8 +35,7 @@ export class MainPage extends React.Component {
             <Ons.Toolbar>
                 <div className='left'>
                     <Ons.ToolbarButton onClick={this.openMenu.bind(this)}>
-                        <Ons.Icon icon='ion-navicon' />
-                        xx
+                        <i className="fa fa-bars"></i>
                     </Ons.ToolbarButton>
                 </div>
                 <div className='center'>Main page</div>
@@ -51,15 +50,19 @@ export class MainPage extends React.Component {
                     <Ons.SplitterSide side='left' width={200} collapse={true} isSwipeable={true}
                         isOpen={this.state.menuOpened} onClose={this.closeMenu.bind(this)} onOpen={this.openMenu.bind(this)}>
                         <Ons.Page>
-                            <p>List items here</p>
-                            <Ons.List />
+                            <div className="pageContent">
+                                <p>List items here</p>
+                                <Ons.List />
 
-                            <p onClick={this.logout.bind(this)} className="logout">Logout</p>
+                                <p onClick={this.logout.bind(this)} className="logout">Logout</p>
+                            </div>
                         </Ons.Page>
                     </Ons.SplitterSide>
                     <Ons.SplitterContent>
                         <Ons.Page renderToolbar={this.renderToolbar.bind(this)}>
-                            <p>some text here</p>
+                            <div className="pageContent center">
+                                <p>some text here</p>
+                            </div>
                         </Ons.Page>
                     </Ons.SplitterContent>
                 </Ons.Splitter >
