@@ -11,8 +11,8 @@ export class DBController extends React.Component {
 
     verifyUser(name, password) {
         // Do the API call to database here
-        var onSuccess = this.onSuccess;
         var onError = this.onError;
+        var thisObj = this;
 
         /*
         $.ajax({
@@ -22,7 +22,9 @@ export class DBController extends React.Component {
             url: "http://45.76.189.70:5000/api/v1.0/account/login",
             contentType: "application/x-www-form-urlencoded",
             data: JSON.stringify({ "accname": "admin", "password": "admin123" }),
-            success: onSuccess,
+            success: function(data) {
+                thisObj.onSuccess(data);
+            },
             error: onError
         });*/
 
@@ -30,7 +32,12 @@ export class DBController extends React.Component {
         return true;
     }
 
-    onSuccess() {
+    onSuccess(data) {
+        console.log(data.status);
+
+        // TODO: If the status returned is "success", should return true to 
+        // log in the user.
+
         console.log("API call successful");
     }
 
