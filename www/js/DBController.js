@@ -9,36 +9,33 @@ export class DBController extends React.Component {
         console.log("Database initialized");
     }
 
-    verifyUser(name, password) {
+    verifyUser(name, password, callbackFunc) {
         // Do the API call to database here
-        var onError = this.onError;
         var thisObj = this;
+        var result = null;
 
-        /*
+        var sendData = { "accname": "admin", "password": "admin123" };
+        console.log("Sending data: " + sendData);
+        
         $.ajax({
             type: "POST",
-            dataType: "json",
             crossDomain: true,
             url: "http://45.76.189.70:5000/api/v1.0/account/login",
             contentType: "application/x-www-form-urlencoded",
-            data: JSON.stringify({ "accname": "admin", "password": "admin123" }),
+            data: sendData,
             success: function(data) {
-                thisObj.onSuccess(data);
+                var result = thisObj.onSuccess(data);
+                callbackFunc(result);
             },
-            error: onError
-        });*/
-
-        // Return true for now
-        return true;
+            error: function() {
+                thisObj.onError();
+            }
+        });
     }
 
     onSuccess(data) {
-        console.log(data.status);
-
-        // TODO: If the status returned is "success", should return true to 
-        // log in the user.
-
-        console.log("API call successful");
+        console.log("API call successful. Returning " + data.status);
+        return data.status;
     }
 
     onError() {

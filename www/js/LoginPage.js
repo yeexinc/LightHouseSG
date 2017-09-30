@@ -17,6 +17,9 @@ export class LoginPage extends React.Component {
         this.username = '';
         this.password = '';
 
+        this.state = {
+            loggingIn: false
+        }
     }
 
     renderToolbar() {
@@ -33,9 +36,19 @@ export class LoginPage extends React.Component {
     }
 
     handleLogin() {
+        // TODO: replace this with actual inputs from the fields
+        this.setState({ loggingIn: true });// Display the "logging in..." alert
 
-        //TODO: replace this with actual inputs from the fields
-        var result = this.database.verifyUser("admin", "admin123");
+        // Uncomment this to do actual API call to the database
+        //var result = this.database.verifyUser("admin", "admin123", this.doLogin);
+        
+        // Return true for now
+        this.doLogin(true);
+    }
+
+    doLogin(result) {
+        console.log("Verification complete");
+        this.setState({ loggingIn: false }); // Hide the alert after verification is done
         if (result) {
             this.navigator.pushPage({ component: MainPage, key: 'main-page' });
         }
@@ -48,12 +61,21 @@ export class LoginPage extends React.Component {
         return (
             <Ons.Page renderToolbar={this.renderToolbar.bind(this)}>
                 <div className="pageContent center">
-                <Ons.Input placeholder="Username" modifier="underbar"></Ons.Input>
-                <br/>
-                <Ons.Input placeholder="Password" modifier="underbar"></Ons.Input>
-                <br/><br/>
-                <Ons.Button onClick={this.handleLogin.bind(this)}>Login</Ons.Button>
+                    <Ons.Input placeholder="Username" modifier="underbar"></Ons.Input>
+                    <br />
+                    <Ons.Input placeholder="Password" modifier="underbar"></Ons.Input>
+                    <br /><br />
+                    <Ons.Button onClick={this.handleLogin.bind(this)}>Login</Ons.Button>
                 </div>
+
+                <Ons.AlertDialog
+                    isOpen={this.state.loggingIn}
+                    isCancelable={false}>
+                    <div className='alert-dialog-title'>Logging in...</div>
+                    <div className='alert-dialog-content'>
+                        <i className="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+                    </div>
+                </Ons.AlertDialog>
             </Ons.Page>
         )
     }
