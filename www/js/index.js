@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { AppPage } from './AppPage';
+import { AppPage } from '../components/AppPage';
 
 
 var app = {

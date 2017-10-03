@@ -3,9 +3,10 @@ import ReactDOM from 'react-dom';
 
 export class DBController extends React.Component {
 
-    constructor() {
+    constructor(navigator) {
         // Add initialization as needed here
         super();
+        this.navigator = navigator;
         console.log("Database initialized");
     }
 
@@ -14,7 +15,7 @@ export class DBController extends React.Component {
         var thisObj = this;
         var result = null;
 
-        var sendData = { "accname": "admin", "password": "admin123" };
+        var sendData = { "accname": name, "password": password };
         console.log("Sending data: " + sendData);
         
         $.ajax({
@@ -25,7 +26,9 @@ export class DBController extends React.Component {
             data: sendData,
             success: function(data) {
                 var result = thisObj.onSuccess(data);
-                callbackFunc(result);
+                console.log("AJAX call successful, executing callback function...");
+                callbackFunc(result, thisObj.navigator);
+                console.log("Callback function executed");
             },
             error: function() {
                 thisObj.onError();
@@ -41,5 +44,4 @@ export class DBController extends React.Component {
     onError() {
         console.log("API call failed");
     }
-
 }
