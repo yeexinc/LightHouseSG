@@ -45,15 +45,13 @@ export class LoginPage extends React.Component {
         this.setState({ loggingIn: true });// Display the "logging in..." alert
 
         // Uncomment this to do actual API call to the database
-        //var result = this.database.verifyUser("admin", "admin123", this.doLogin);
+        //var result = this.database.verifyUser(this.state.username, this.state.password, this.doLogin.bind(this));
 
         // Comment this out if actual API call is used
         this.doLogin(true, this.navigator);
     }
 
     doLogin(result, navigator) {
-        console.log("Verification complete");
-        console.log(result);
         this.setState({ loggingIn: false }); // Hide the alert after verification is done
         if (result) {
             navigator.pushPage({ component: this.createMainPage.bind(this), key: 'main-page' });
@@ -64,7 +62,6 @@ export class LoginPage extends React.Component {
     }
 
     createMainPage() {
-        //TODO: replace the info with actual log in user info
         var info = {
             name: this.state.username,
             type: "volunteer"
