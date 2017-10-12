@@ -20,6 +20,4 @@ export class NotificationsPage extends React.Component {
             </Ons.Page>
         );
     }
-
-
 }

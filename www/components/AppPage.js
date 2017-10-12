@@ -42,14 +42,6 @@ class IndexPage extends React.Component {
         this.navigator = navigator.navigator;
     }
 
-    renderToolbar() {
-        return (
-            <Ons.Toolbar>
-                <div className='center'>LightHouseSG</div>
-            </Ons.Toolbar>
-        )
-    }
-
     pushLoginPage() {
         // Display the login page
         this.navigator.pushPage({ component: LoginPage, key: 'login-page' });
@@ -57,9 +49,11 @@ class IndexPage extends React.Component {
 
     render() {
         return (
-            <Ons.Page renderToolbar={this.renderToolbar.bind(this)} className="page">
-                <div className="pageContent center">
-                    <p>text here</p>
+            <Ons.Page className="indexPageContainer">
+                <div className="indexPage pageContent center">
+                    <h1>LightHouseSG</h1>
+                    <img src="../img/LightHouse.svg" width="200px"/>
+                    <br /><br />
                 <Ons.Button onClick={this.pushLoginPage.bind(this)}>
                     Login
                 </Ons.Button>

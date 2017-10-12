@@ -24,6 +24,16 @@ body {
     font-size:20px;
 }
 
+.indexPage {
+    height: 100%;
+    background-color: #182e6f;
+    color: white;
+}
+
+.indexPage h1 {
+    font-family: 'Gondola SD', Georgia, sans-serif;
+}
+
 .center {
     text-align:center;
 }
@@ -33,10 +43,47 @@ body {
 }
 
 .mainPage {
-    background-color: pink;
+    
 }
 
 .logout {
     color: darkcyan;
     cursor: pointer;
+}
+
+.userPage .userType {
+    text-transform: uppercase;
+    color:#aaa;
+}
+
+.errandCard i {
+    float:left;
+    color: mediumseagreen;
+}
+
+errandCard p {
+    margin:0px;
+}
+
+.errandCard h1 {
+    font-size:12pt;
+    border-bottom: 1px solid #ddd;
+    margin-left:25px;
+}
+
+.errandCard .postedDate {
+    color: #aaa;
+}
+
+.errandCard .userLink {
+    color: darkcyan;
+}
+
+.errandCard .userLink:hover {
+    color: black;
+    cursor: pointer;
+}
+
+textarea {
+    width:100%;
 }

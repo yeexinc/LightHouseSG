@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import { DBStub } from './DBStub';
+
 export class DBController extends React.Component {
 
     constructor(navigator) {
         // Add initialization as needed here
         super();
         this.navigator = navigator;
+        this.dbStub = new DBStub();
         console.log("Database initialized");
     }
 
@@ -14,9 +17,7 @@ export class DBController extends React.Component {
         // Do the API call to database here
         var thisObj = this;
         var result = null;
-
         var sendData = { "accname": name, "password": password };
-        console.log("Sending data: " + sendData);
         
         $.ajax({
             type: "POST",
@@ -26,14 +27,25 @@ export class DBController extends React.Component {
             data: sendData,
             success: function(data) {
                 var result = thisObj.onSuccess(data);
-                console.log("AJAX call successful, executing callback function...");
+                console.log("Successfully verified user");
                 callbackFunc(result, thisObj.navigator);
-                console.log("Callback function executed");
             },
             error: function() {
                 thisObj.onError();
             }
         });
+    }
+
+    getUser(userID, callbackFunc) {
+        // Do the AJAX call here
+        //...
+        return this.dbStub.getUser(userID);
+    }
+    
+    getOngoingErrand(userID, callbackFunc) {
+        // Do the AJAX call here
+        //...
+        return this.dbStub.getOngoingErrand(userID);
     }
 
     onSuccess(data) {

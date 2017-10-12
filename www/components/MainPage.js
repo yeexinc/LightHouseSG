@@ -11,7 +11,8 @@ import { SearchPage } from './SearchPage';
 import { UserPage } from './UserPage';
 
 export const volunteerTabs = ['Errands', 'Notifications', 'Search', 'User', 'Settings'];
-export const beneficiaryTabs = ['Errands', 'Add', 'User', 'Settings']
+//export const beneficiaryTabs = ['Errands', 'Add', 'User', 'Settings']
+export const beneficiaryTabs = ['Errands', 'User', 'Settings']
 
 export class MainPage extends React.Component {
 
@@ -20,6 +21,12 @@ export class MainPage extends React.Component {
 
         //Initialize class variables
         this.navigator = props.navigator;
+        this.database = props.database;
+
+        // user is in a form of json object: (refer createMainPage() in LoginPage.)
+        // name: this.state.username,
+        // type: this.state.selectedUserType (type can be 'volunteer' or 'beneficiary')
+        // (to be updated to include more info later)
         this.user = props.info;
         this.tabs = (this.user.type == 'volunteer') ? volunteerTabs : beneficiaryTabs;
 
@@ -48,7 +55,7 @@ export class MainPage extends React.Component {
             switch (this.tabs[i]) {
                 case 'Errands':
                     t.push({
-                        content: <ErrandsPage user={this.user} key='errands-page' />,
+                        content: <ErrandsPage user={this.user} key='errands-page' navigator={this.navigator} database={this.database} />,
                         tab: <Ons.Tab label='Errands' icon='fa-home' />
                     });
                     break;
@@ -67,7 +74,7 @@ export class MainPage extends React.Component {
                 case 'User':
                     t.push({
                         content: <UserPage user={this.user} logout={this.logout.bind(this)}
-                        key='user-page' />,
+                            key='user-page' />,
                         tab: <Ons.Tab label='User' icon='fa-user' />
                     });
                     break;
@@ -85,7 +92,7 @@ export class MainPage extends React.Component {
                     break;
                 default:
                     t.push({
-                        content: <ExamplePage content="An error occurred. Please try again later"     key='example-page' />,
+                        content: <ExamplePage content="An error occurred. Please try again later" key='example-page' />,
                         tab: <Ons.Tab label={null} icon={null} />
                     });
             }
@@ -93,9 +100,27 @@ export class MainPage extends React.Component {
         return t;
     }
 
+    createAddErrandForm() {
+        this.navigator.pushPage({ component: AddErrandForm, key: 'add-errand-form' });
+    }
+
     render() {
+        // Display add errand button if user is a beneficiary
+        if (this.user) {
+            var addErrandButton = this.user.type == 'beneficiary' ? <Ons.Fab
+                style={{
+                    backgroundColor: ons.platform.isIOS() ? '#4282cc' : null,
+                    margin: '0px 0px 45px 0px'
+                }}
+                ripple mini
+                position='bottom right' onClick={this.createAddErrandForm.bind(this)}>
+                <i className="fa fa-plus"></i>
+            </Ons.Fab> : null;
+        }
+
         return (
             <Ons.Page renderToolbar={this.renderToolbar.bind(this)}>
+                {addErrandButton}
                 <Ons.Tabbar swipeable={true} position='auto' index={this.state.index}
                     onPreChange={(event) => {
                         if (event.index != this.state.index) {
@@ -120,9 +145,79 @@ class ExamplePage extends React.Component {
                 <section style={{ margin: '16px' }}>
                     <p>
                         {this.props.content}.
-              </p>
+                    </p>
                 </section>
             </Ons.Page>
         );
+    }
+}
+
+class AddErrandForm extends React.Component {
+    constructor() {
+        super();
+
+        this.state = {
+            errandName: ''
+        }
+    }
+
+    renderToolbar() {
+        // note: repeated codes from LoginPage.js
+        return (
+            <Ons.Toolbar>
+                <div className='left'>
+                    <Ons.BackButton>
+                        Back
+                    </Ons.BackButton>
+                </div>
+                <div className='center'>Submit new errand</div>
+            </Ons.Toolbar>
+        );
+    }
+
+    renderRow() {
+        console.log("hjkfd");
+        return (
+            <Ons.ListItem>
+                <Ons.Input value={this.state.errandName}
+                    modifier='underbar'
+                    float
+                    placeholder='Errand name' />
+            </Ons.ListItem>
+        )
+
+    }
+
+    // Note: because using pure html is easier to get what I want lmao
+    render() {
+        return (
+            <Ons.Page renderToolbar={this.renderToolbar.bind(this)}>
+                <br />
+                <ul className="list">
+                    <li className="list-item">
+                        <div className="list-item__center">
+                            <input type="text" className="text-input" placeholder="Title of the errand" />
+                        </div>
+                    </li>
+                </ul>
+                <br />
+                <ul className="list">
+                    <li className="list-item">
+                        <div className="list-item__center">
+                            <textarea className="textarea textarea--transparent" placeholder="Describe what is needed to be done"></textarea>
+                        </div>
+                    </li>
+                </ul>
+
+                <br />
+                <ul className="list">
+                    <li className="list-item">
+                        <div className="list-item__center">
+                            <input type="text" className="text-input" placeholder="Tags (e.g. ride, clean)" />
+                        </div>
+                    </li>
+                </ul>
+            </Ons.Page>
+        )
     }
 }
