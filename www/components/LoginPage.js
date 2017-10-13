@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import * as Ons from 'react-onsenui';
 import * as ons from 'onsenui';
 
-import { DBController } from './DBController';
+import { DBController } from './utilities/DBController';
 import { MainPage } from './MainPage';
 
 export class LoginPage extends React.Component {
@@ -71,13 +71,9 @@ export class LoginPage extends React.Component {
     }
 
     createMainPage() {
-        console.log("Creating main page...", this.database);
-        var info = {
-            name: this.state.username,
-            type: this.state.selectedUserType,
-            database: this.database
-        }
-        return <MainPage navigator={this.navigator} info={info} database={this.database}/>;
+        // get the sample user from the stub for now
+        var sampleUser = (this.state.selectedUserType == 'volunteer') ? this.database.getUser(1, null): this.database.getUser(2, null); 
+        return <MainPage navigator={this.navigator} user={sampleUser} database={this.database}/>;
     }
 
     handleUsernameChange(e) {

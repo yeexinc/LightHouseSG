@@ -24,11 +24,8 @@ export class MainPage extends React.Component {
         this.database = props.database;
 
         // user is in a form of json object: (refer createMainPage() in LoginPage.)
-        // name: this.state.username,
-        // type: this.state.selectedUserType (type can be 'volunteer' or 'beneficiary')
-        // (to be updated to include more info later)
-        this.user = props.info;
-        this.tabs = (this.user.type == 'volunteer') ? volunteerTabs : beneficiaryTabs;
+        this.user = props.user;
+        this.tabs = (this.user.userType == 'volunteer') ? volunteerTabs : beneficiaryTabs;
 
         this.state = {
             index: 0
@@ -74,6 +71,8 @@ export class MainPage extends React.Component {
                 case 'User':
                     t.push({
                         content: <UserPage user={this.user} logout={this.logout.bind(this)}
+                        navigator={this.navigator}
+                        database={this.database}
                             key='user-page' />,
                         tab: <Ons.Tab label='User' icon='fa-user' />
                     });
@@ -176,7 +175,6 @@ class AddErrandForm extends React.Component {
     }
 
     renderRow() {
-        console.log("hjkfd");
         return (
             <Ons.ListItem>
                 <Ons.Input value={this.state.errandName}

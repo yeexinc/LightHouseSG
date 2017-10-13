@@ -48,6 +48,12 @@ export class DBController extends React.Component {
         return this.dbStub.getOngoingErrand(userID);
     }
 
+    getCompletedErrands(userID, callbackFunc) {
+        // Do the AJAX call here
+        //...
+        return this.dbStub.getCompletedErrands(userID);
+    }
+
     onSuccess(data) {
         console.log("API call successful. Returning " + data.status);
         return data.status;

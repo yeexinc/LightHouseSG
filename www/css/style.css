@@ -26,7 +26,7 @@ body {
 
 .indexPage {
     height: 100%;
-    background-color: #182e6f;
+    background-color: #203864;
     color: white;
 }
 
@@ -51,14 +51,27 @@ body {
     cursor: pointer;
 }
 
-.userPage .userType {
+.userPage h2 {
+    font-size:8pt;
     text-transform: uppercase;
     color:#aaa;
+    margin-top:3px;
+    margin-bottom:3px;
 }
 
+.userPage .userInfo {
+    margin-bottom: 15px;
+}
+
+.rating, .errandCard .rating i {
+    float: right;
+    color:rgb(226, 180, 28);
+}
+
+/* Thumbtack icon on errand */
 .errandCard i {
     float:left;
-    color: mediumseagreen;
+    color: #2e6ca4;
 }
 
 errandCard p {
@@ -67,7 +80,8 @@ errandCard p {
 
 .errandCard h1 {
     font-size:12pt;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid black;
+    padding: 5px;
     margin-left:25px;
 }
 
@@ -82,6 +96,10 @@ errandCard p {
 .errandCard .userLink:hover {
     color: black;
     cursor: pointer;
+}
+
+.tags {
+    color: #2abdf2;
 }
 
 textarea {
