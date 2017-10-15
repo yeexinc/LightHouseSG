@@ -10,12 +10,14 @@ export class SettingsPage extends React.Component {
     }
 
     render() {
+        var logoutLink = null;
+        if (this.props.logout) {
+            logoutLink = <p onClick={this.props.logout} className="logout">Logout</p>;
+        }
         return (
             <Ons.Page>
                 <section style={{ margin: '16px' }}>
-                    <p>
-                        This page should display settings for {this.props.user.name}.
-                    </p>
+                    {logoutLink}
                 </section>
             </Ons.Page>
         );

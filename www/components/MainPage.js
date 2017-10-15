@@ -41,7 +41,9 @@ export class MainPage extends React.Component {
 
     renderToolbar() {
         return (
-            <PageToolbar title={this.tabs[this.state.index]} hasBackBtn={false} />
+            <Ons.Toolbar>
+                <div className='center'>{this.tabs[this.state.index]}</div>
+            </Ons.Toolbar>
         );
     }
 
@@ -58,7 +60,7 @@ export class MainPage extends React.Component {
                     break;
                 case 'Notifications':
                     t.push({
-                        content: <NotificationsPage user={this.user} key='notifications-page' />,
+                        content: <NotificationsPage user={this.user} database={this.database} navigator={this.navigator} key='notifications-page' />,
                         tab: <Ons.Tab label='Notifications' icon='fa-bell' key='notifications-page-key' />
                     });
                     break;
@@ -70,10 +72,8 @@ export class MainPage extends React.Component {
                     break;
                 case 'User':
                     t.push({
-                        content: <UserPage user={this.user} logout={this.logout.bind(this)}
-                        navigator={this.navigator}
-                        database={this.database}
-                            key='user-page' />,
+                        content: <UserPage user={this.user} navigator={this.navigator}
+                            database={this.database} key='user-page' />,
                         tab: <Ons.Tab label='User' icon='fa-user' key='user-page-key' />
                     });
                     break;
@@ -85,7 +85,7 @@ export class MainPage extends React.Component {
                     break;
                 case 'Settings':
                     t.push({
-                        content: <SettingsPage user={this.user} key='settings-page' />,
+                        content: <SettingsPage user={this.user} logout={this.logout.bind(this)}key='settings-page' />,
                         tab: <Ons.Tab label='Settings' icon='fa-cog' key='settings-page-key' />
                     });
                     break;

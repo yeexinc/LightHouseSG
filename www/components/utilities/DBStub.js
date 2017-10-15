@@ -115,4 +115,9 @@ export class DBStub extends React.Component {
     getCompletedErrands(userID) {
         return this.sampleCompletedErrands;
     }
+
+    getListedErrands(userID) {
+        // for testing, userID is not used
+        return this.sampleErrands;
+    }
 }

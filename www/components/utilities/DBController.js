@@ -53,13 +53,22 @@ export class DBController extends React.Component {
     getOngoingErrand(userID, callbackFunc) {
         // Do the AJAX call here
         //...
-        return this.dbStub.getOngoingErrand(userID);
+        var result = this.dbStub.getOngoingErrand(userID);
+        callbackFunc(result); //onErrandLoaded(result)
     }
 
     getCompletedErrands(userID, callbackFunc) {
         // Do the AJAX call here
         //...
         return this.dbStub.getCompletedErrands(userID);
+    }
+
+    // Get the matched errands for notifications page
+    getListedErrands(userID, callbackFunc) {
+        // Do the AJAX call here
+        // ...
+        var result = this.dbStub.getListedErrands(userID);
+        callbackFunc(result);
     }
 
     onSuccess(data) {

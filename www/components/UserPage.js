@@ -17,7 +17,7 @@ export class UserPage extends React.Component {
         this.onUserLoaded = this.onUserLoaded.bind(this);
 
         // If there is no user object passed in, we have to load the user from the database later in componentWillMount()
-        if (this.user == null && this.userID) {
+        if (this.user == null) {
             this.state = {
                 userLoaded: false
             }
@@ -59,16 +59,13 @@ export class UserPage extends React.Component {
     render() {
         // do not render the user page if the user
         // has yet to be fetched from the database
-        if (this.user == null) {
+        if (!this.state.userLoaded) {
             return (
                 <Ons.Page renderToolbar={this.renderToolbar.bind(this)}>
                     <LoadingSection text="Loading user..." />
                 </Ons.Page>
             );
         }
-
-        // Display the log out link if the user is displaying their own page
-        var logoutLink = this.shouldRenderTB ? null : <p onClick={this.props.logout} className="logout">Logout</p>;
 
         // If the user is a volunteer and is viewing their own profile
         var postalCode = null;
@@ -130,7 +127,6 @@ export class UserPage extends React.Component {
                     {tags}
 
                     {renderedPastEr}
-                    {logoutLink}
                 </section>
             </Ons.Page>
         );

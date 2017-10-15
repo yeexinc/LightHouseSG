@@ -9,9 +9,7 @@ import { UserPage } from '../UserPage';
 
 /* The Errand object to be displayed on the Errands page or Notifications 
 page. Since this errand has not yet been completed, it will not be shown 
-on any user's page. We can assume that we only have to display "Submitted 
-by (beneficiary's name)" and do not have to take the volunteer's name 
-into account.
+on any user's page. 
 
 The Errand object only has the user ID and user name (to display links.)
 When the link is clicked on, it will create a new UserPage, which will fetch
@@ -24,29 +22,132 @@ export class Errand extends React.Component {
         this.beneID = props.errand.beneID;
         this.beneName = props.errand.beneName;
 
+        this.shouldDisplayVol = false;
+        this.onExpand = this.onExpand.bind(this);
+
+        /* If the logged in user is a beneficiary, check if the errand has 
+        been taken up by a volunteer. If there is, display status as 
+        "Accepted by ___". If there is not, display "Pending" */
+        if (props.userType == 'beneficiary') {
+            if (props.volID != null && props.volName != null) {
+                // Set the flag to display relevant info
+                this.shouldDisplayVol = true;
+            }
+        }
+
         // To create user link
         this.navigator = props.navigator;
         this.database = props.database;
+
+        var exp = this.props.expanded ? true : false;
+        this.state = {
+            expanded: exp
+        }
+    }
+
+    onExpand() {
+        this.setState({ expanded: true });
     }
 
     render() {
         var userLink = this.beneName;
-        if (this.navigator != null && this.database != null && this.beneID != null) {
-            userLink = <UserLink userID={this.beneID} userName={this.beneName} navigator={this.navigator} database={this.database} />
+        if (this.navigator != null && this.database != null) {
+            if (this.props.userType == 'beneficiary') {
+                userLink = <p className="postedDate"><span className="orange">Pending</span></p>;
+                if (this.shouldDisplayVol) {
+                    userLink = <p className="postedDate"><span className="green">Accepted</span> by <UserLink userID={this.volID} userName={this.volName} navigator={this.navigator} database={this.database} /> on {this.errand.postedDate}</p>
+                }
+            }
+            else {
+                userLink = <p className="postedDate">Submitted by <UserLink userID={this.beneID} userName={this.beneName} navigator={this.navigator} database={this.database} /> on {this.errand.postedDate}</p>
+            }
         }
 
+        var expandButton = null;
+        var details = null;
+        if (!this.state.expanded) {
+            expandButton = <span className="expandBtn" onClick={this.onExpand}>▼ Expand ▼</span>;
+            var desc = this.errand.description;
+            if (this.errand.description.length > 80) {
+                desc = desc.slice(0, 80) + "...";
+            }
+            details = <div>
+                {desc}
+                {expandButton}
+            </div>;
+        }
+        else {
+            details = <div>
+                <p>{this.errand.description}</p>
+                <p className="tags">{this.errand.tags}</p>
+            </div>;
+        }
 
         return (
             <Ons.Card>
                 <section className="errandCard">
-                    <i className="fa fa-thumb-tack fa-2x"></i><h1>{this.errand.title}</h1>
-                    <p>{this.errand.description}</p>
-                    <p className="postedDate">Submitted by {userLink} on {this.errand.postedDate}</p>
-                    <p className="tags">{this.errand.tags}</p>
+                    <i className="fa fa-thumb-tack fa-2x tack"></i><h1>{this.errand.title}</h1>
+                    {userLink}
+                    {details}
                 </section>
             </Ons.Card>
         )
     }
+}
+
+export class NotifErrand extends Errand {
+    constructor(props) {
+        super(props);
+
+        // Calculate the expiry time somehow?
+        this.expiryTime = "4 hours";
+    }
+
+    onAcceptBtnClicked() {
+        this.props.onRespondBtnClicked(true);
+    }
+
+    onRejectBtnClicked() {
+        this.props.onRespondBtnClicked(false);
+    }
+
+    render() {
+        var userLink = userLink = <p className="postedDate">Submitted by <UserLink userID={this.beneID} userName={this.beneName} navigator={this.navigator} database={this.database} /> on {this.errand.postedDate}</p>
+
+        var expiryText = null;
+        if (this.expiryTime != null) {
+            expiryText = <span className="red">This request expires in {this.expiryTime}.</span>
+        }
+
+        // For notifs, no expand button needed
+        var details = <div>
+            <p>{this.errand.description}</p>
+            <p className="tags">{this.errand.tags}</p>
+        </div>
+
+        // For notifs, we need to have accept/reject buttons
+        var respondBtns = <div className="center">
+            <span className="respondBtnContainer green" onClick={this.onAcceptBtnClicked.bind(this)}>
+                <i className="fa fa-check-circle fa-2x"></i>
+                <br/>Accept</span>
+            <span className="respondBtnContainer red" onClick={this.onRejectBtnClicked.bind(this)}>
+                <i className="fa fa-times-circle fa-2x"></i>
+                <br/>Reject</span>
+            </div>;
+
+        return (
+            <Ons.Card>
+                <section className="errandCard">
+                    <i className="fa fa-thumb-tack fa-2x tack"></i><h1>{this.errand.title}</h1>
+                    {userLink}
+                    {details}
+                    {expiryText}
+                    {respondBtns}
+                </section>
+            </Ons.Card>
+        )
+    }
+
 }
 
 
@@ -109,10 +210,10 @@ export class CompletedErrand extends Errand {
         return (
             <Ons.Card>
                 <section className="errandCard">
-                    <i className="fa fa-thumb-tack fa-2x"></i>
+                    <i className="fa fa-thumb-tack fa-2x tack"></i>
                     <h1>{this.errand.title}</h1>
-                    {description}
                     {completedBy}
+                    {description}
                     {comment}
                 </section>
             </Ons.Card>
@@ -151,14 +252,15 @@ export class Rating extends React.Component {
         super(props);
         this.rating = props.rating;
         this.stars = [];
-        for (var i = 0; i < Math.floor(this.rating); i++) {
-            var key = "star-rating-" + i;
-            this.stars.push(<i className="fa fa-star" key={key}></i>);
-        }
-        while (i < 5) {
+
+        for (var i = 5; i > Math.floor(this.rating); i--) {
             var key = "star-rating-" + i;
             this.stars.push(<i className="fa fa-star-o" key={key}></i>);
-            i++;
+        }
+        while (i > 0) {
+            var key = "star-rating-" + i;
+            this.stars.push(<i className="fa fa-star" key={key}></i>);
+            i--;
         }
     }
 
@@ -195,7 +297,7 @@ export class PageToolbar extends React.Component {
 
     render() {
         var backBtn = this.hasBackBtn ? <div className='left'>
-                        <Ons.BackButton>Back
+            <Ons.BackButton>Back
                         </Ons.BackButton></div> : null;
         return (
             <Ons.Toolbar>
