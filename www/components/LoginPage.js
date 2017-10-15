@@ -4,6 +4,7 @@ import * as Ons from 'react-onsenui';
 import * as ons from 'onsenui';
 
 import { DBController } from './utilities/DBController';
+import { PageToolbar } from './utilities/PageUtilities';
 import { MainPage } from './MainPage';
 
 export class LoginPage extends React.Component {
@@ -26,14 +27,7 @@ export class LoginPage extends React.Component {
 
     renderToolbar() {
         return (
-            <Ons.Toolbar>
-                <div className='left'>
-                    <Ons.BackButton>
-                        Back
-                    </Ons.BackButton>
-                </div>
-                <div className='center'>Login page</div>
-            </Ons.Toolbar>
+            <PageToolbar title="Login" hasBackBtn={true}/>            
         );
     }
 
@@ -60,8 +54,8 @@ export class LoginPage extends React.Component {
     // The callback function passed to DBController. If verification is
     // successful, this function renders the main page.
     doLogin(result, navigator) {
-        console.log(this.database);
-        this.setState({ loggingIn: false }); // Hide the alert after verification is done
+        // Hide the alert after verification is done
+        this.setState({ loggingIn: false }); 
         if (result) {
             navigator.pushPage({ component: this.createMainPage.bind(this), key: 'main-page' });
         }

@@ -78,9 +78,7 @@ export class CompletedErrand extends Errand {
         if (this.ownProfile) {
 
             // Show the necesssary information.
-            rating = <Rating rating={this.errand.beneRate}/>;
-            console.log(this.errand.beneRate);
-            console.log(rating);
+            rating = <Rating rating={this.errand.beneRate} />;
             description = <p>{this.errand.description}</p>;
             tags = <p className="tags">{this.errand.tags}</p>;
 
@@ -105,7 +103,7 @@ export class CompletedErrand extends Errand {
             comment = <div>
                 {rating}
                 <b>Beneficiary's comment:</b>
-                <br/>{this.errand.beneComment}
+                <br />{this.errand.beneComment}
             </div>
         }
         return (
@@ -137,7 +135,7 @@ class UserLink extends React.Component {
     }
 
     createUserPage() {
-        return <UserPage shouldRenderTB={true} userID={this.userID} database={this.database} navigator={this.navigator}/>
+        return <UserPage shouldRenderTB={true} userID={this.userID} database={this.database} navigator={this.navigator} />
     }
 
     render() {
@@ -170,5 +168,39 @@ export class Rating extends React.Component {
                 {this.stars}
             </div>
         )
+    }
+}
+
+export class LoadingSection extends React.Component {
+    constructor(props) {
+        super(props);
+        this.text = props.text;
+    }
+
+    render() {
+        return (
+            <section className="loadingSection">
+                <i className="fa fa-spinner fa-pulse fa-2x"></i>
+                <p>{this.text}</p></section>
+        )
+    }
+}
+
+export class PageToolbar extends React.Component {
+    constructor(props) {
+        super(props);
+        this.title = props.title;
+        this.hasBackBtn = props.hasBackBtn ? props.hasBackBtn : false;
+    }
+
+    render() {
+        var backBtn = this.hasBackBtn ? <div className='left'>
+                        <Ons.BackButton>Back
+                        </Ons.BackButton></div> : null;
+        return (
+            <Ons.Toolbar>
+                {backBtn}
+                <div className='center'>{this.title}</div>
+            </Ons.Toolbar>)
     }
 }

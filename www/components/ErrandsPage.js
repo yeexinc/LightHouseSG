@@ -22,16 +22,14 @@ export class ErrandsPage extends React.Component {
         var ongoingErrandText = (this.ongoingErrand) ? "You have one ongoing errand." : "You do not have any ongoing errands.";
         var ongoingErrand = null;
         if (this.ongoingErrand) {
-            ongoingErrand = <Errand errand={this.ongoingErrand} navigator={this.navigator} database={this.database}/>
+            ongoingErrand = <Errand errand={this.ongoingErrand} navigator={this.navigator} database={this.database} />
         }
         return (
             <Ons.Page>
                 <section className="pageContent">
-                    <p>
-                        Welcome, {this.user.accName}!
+                    Welcome, {this.user.accName}!
                         <br /> {ongoingErrandText}
-                        {ongoingErrand}
-                    </p>
+                    {ongoingErrand}
                 </section>
             </Ons.Page>
         );

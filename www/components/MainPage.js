@@ -10,6 +10,8 @@ import { SettingsPage } from './SettingsPage';
 import { SearchPage } from './SearchPage';
 import { UserPage } from './UserPage';
 
+import { PageToolbar } from './utilities/PageUtilities';
+
 export const volunteerTabs = ['Errands', 'Notifications', 'Search', 'User', 'Settings'];
 //export const beneficiaryTabs = ['Errands', 'Add', 'User', 'Settings']
 export const beneficiaryTabs = ['Errands', 'User', 'Settings']
@@ -39,9 +41,7 @@ export class MainPage extends React.Component {
 
     renderToolbar() {
         return (
-            <Ons.Toolbar>
-                <div className='center'>{this.tabs[this.state.index]}</div>
-            </Ons.Toolbar>
+            <PageToolbar title={this.tabs[this.state.index]} hasBackBtn={false} />
         );
     }
 
@@ -53,19 +53,19 @@ export class MainPage extends React.Component {
                 case 'Errands':
                     t.push({
                         content: <ErrandsPage user={this.user} key='errands-page' navigator={this.navigator} database={this.database} />,
-                        tab: <Ons.Tab label='Errands' icon='fa-home' />
+                        tab: <Ons.Tab label='Errands' icon='fa-home' key='errands-page-key' />
                     });
                     break;
                 case 'Notifications':
                     t.push({
                         content: <NotificationsPage user={this.user} key='notifications-page' />,
-                        tab: <Ons.Tab label='Notifications' icon='fa-bell' />
+                        tab: <Ons.Tab label='Notifications' icon='fa-bell' key='notifications-page-key' />
                     });
                     break;
                 case 'Search':
                     t.push({
                         content: <SearchPage user={this.user} key='search-page' />,
-                        tab: <Ons.Tab label='Search' icon='fa-search' />
+                        tab: <Ons.Tab label='Search' icon='fa-search' key='search-page-key' />
                     });
                     break;
                 case 'User':
@@ -74,19 +74,19 @@ export class MainPage extends React.Component {
                         navigator={this.navigator}
                         database={this.database}
                             key='user-page' />,
-                        tab: <Ons.Tab label='User' icon='fa-user' />
+                        tab: <Ons.Tab label='User' icon='fa-user' key='user-page-key' />
                     });
                     break;
                 case 'Add':
                     t.push({
                         content: <ErrandsPage user={this.user} key='add-page' />,
-                        tab: <Ons.Tab label='New Errand' icon='fa-plus' />
+                        tab: <Ons.Tab label='New Errand' icon='fa-plus' key='add-page-key' />
                     });
                     break;
                 case 'Settings':
                     t.push({
                         content: <SettingsPage user={this.user} key='settings-page' />,
-                        tab: <Ons.Tab label='Settings' icon='fa-cog' />
+                        tab: <Ons.Tab label='Settings' icon='fa-cog' key='settings-page-key' />
                     });
                     break;
                 default:
