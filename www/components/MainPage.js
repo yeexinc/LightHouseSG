@@ -106,7 +106,7 @@ export class MainPage extends React.Component {
     render() {
         // Display add errand button if user is a beneficiary
         if (this.user) {
-            var addErrandButton = this.user.type == 'beneficiary' ? <Ons.Fab
+            var addErrandButton = this.user.userType == 'beneficiary' ? <Ons.Fab
                 style={{
                     backgroundColor: ons.platform.isIOS() ? '#4282cc' : null,
                     margin: '0px 0px 45px 0px'
