@@ -72,6 +72,7 @@ export class DBStub extends React.Component {
         this.sampleUsers.push(sampleBene3);
 
         var sampleErrand1 = {
+            "errID": 1,
             "beneID": 2,
             "beneName": "Ben",
             "volID": null,
@@ -87,6 +88,7 @@ export class DBStub extends React.Component {
 
         ///////////////////////////////////////////
         var sampleListedErrand1 = {
+            "errID": 2,
             "beneID": 2,
             "beneName": "Ben",
             "volID": null,
@@ -102,6 +104,7 @@ export class DBStub extends React.Component {
 
         ///////////////////////////////////////////
         var sampleCompletedErrand1 = {
+            "errID": 3,
             "beneID": 2,
             "beneName": "Ben",
             "volID": 1,
@@ -116,6 +119,7 @@ export class DBStub extends React.Component {
         }
 
         var sampleCompletedErrand2 = {
+            "errID": 4,
             "beneID": 3,
             "beneName": "Pikachu",
             "volID": 1,
@@ -133,6 +137,7 @@ export class DBStub extends React.Component {
 
         //////////////////////////////////////////////
         var samplePendingErrand1 = {
+            "errID": 5,
             "beneID": 4,
             "beneName": "Jane",
             "volID": null,
@@ -145,6 +150,7 @@ export class DBStub extends React.Component {
             "beneComment": null
         }
         var samplePendingErrand2 = {
+            "errID": 6,
             "beneID": 3,
             "beneName": "Pikachu",
             "volID": null,
@@ -168,7 +174,8 @@ export class DBStub extends React.Component {
     }
 
     getOngoingErrand(userID) {
-        return this.sampleErrands[0];
+        //return this.sampleErrands[0];
+        return null;
     }
 
     getCompletedErrands(userID) {

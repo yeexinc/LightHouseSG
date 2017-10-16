@@ -52,10 +52,10 @@ class IndexPage extends React.Component {
             <Ons.Page className="indexPageContainer">
                 <div className="indexPage pageContent center">
                     <h1>LightHouseSG</h1>
-                    <img src="../img/LightHouse.svg" width="200px"/>
+                    <img src="../img/LightHouse.svg" width="200px" />
                     <br /><br />
-                <Ons.Button onClick={this.pushLoginPage.bind(this)}>
-                    Login
+                    <Ons.Button onClick={this.pushLoginPage.bind(this)}>
+                        Login
                 </Ons.Button>
                 </div>
             </Ons.Page>

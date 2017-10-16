@@ -45,10 +45,10 @@ export class LoginPage extends React.Component {
         this.setState({ loggingIn: true });
 
         // Uncomment this to do actual API call to the database
-        //var result = this.database.verifyUser(this.state.username, this.state.password, this.doLogin.bind(this));
+        var result = this.database.verifyUser(this.state.username, this.state.password, this.doLogin.bind(this));
 
         // Comment this out if actual API call is used
-        this.doLogin(true, this.navigator);
+        //this.doLogin(true, this.navigator);
     }
 
     // The callback function passed to DBController. If verification is

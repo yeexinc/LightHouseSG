@@ -112,10 +112,11 @@ export class NotifErrand extends Errand {
     }
 
     onAcceptBtnClicked() {
+        console.log(this.errand.errID);
         ons.notification.confirm('Are you sure you want to accept this request?')
             .then((response) => {
                 if (response === 1) {
-                    this.props.onRespondBtnClicked(true);
+                    this.props.onRespondBtnClicked(true, this.errand.errID);
                 }
                 else {
                     console.log("Acceptance cancelled");
@@ -124,10 +125,11 @@ export class NotifErrand extends Errand {
     }
 
     onRejectBtnClicked() {
+        console.log(this, this.errand.errID);
         ons.notification.confirm('Are you sure you want to reject this errand?')
             .then((response) => {
                 if (response === 1) {
-                    this.props.onRespondBtnClicked(false);
+                    this.props.onRespondBtnClicked(false, this.errand.errID);
                 }
                 else {
                     console.log("Rejection cancelled");

@@ -36,6 +36,7 @@ export class MainPage extends React.Component {
 
     logout() {
         this.user = null; // Reset the logged in user info
+        this.database.logout();
         this.navigator.resetPage({ component: AppPage, key: 'app-page' });
     }
 

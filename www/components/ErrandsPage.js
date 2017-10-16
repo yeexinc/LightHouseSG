@@ -19,6 +19,7 @@ export class ErrandsPage extends React.Component {
         this.state = {
             errandLoaded: false
         }
+        this.database.registerNewOfferCallback(this.onNewOfferAdded.bind(this));
     }
 
     componentWillMount() {
@@ -32,6 +33,34 @@ export class ErrandsPage extends React.Component {
     // The callback function passed to the database to be executed after the errand has been fetched
     onErrandLoaded(result) {
         this.ongoingErrand = result;
+        this.setState({ errandLoaded: true });
+    }
+
+    onNewOfferAdded(offer) {
+        this.ongoingErrand = offer;
+        this.setState({ errandLoaded: true });
+    }
+
+    // Example function (should be removed from this page afterwards)
+    addNewNotif() {
+        var sampleErrand = {
+            "errID": 1,
+            "beneID": 2,
+            "beneName": "Ben",
+            "volID": null,
+            "status": "listed",
+            "title": "Sample Errand",
+            "description": "Just a sample errand added.",
+            "postedDate": "16 Oct, 11:30pm",
+            "tags": "#apple #pie",
+            "beneRate": null,
+            "beneComment": null
+        }
+        this.database.addNewNotif(sampleErrand);
+
+        if (this.user.userType == 'beneficiary') {
+            this.ongoingErrand = sampleErrand;
+        }
         this.setState({ errandLoaded: true });
     }
 
@@ -54,6 +83,7 @@ export class ErrandsPage extends React.Component {
                     Welcome, {this.user.accName}!
                         <br /> {ongoingErrandText}
                     {ongoingErrandVar}
+                    <p onClick={this.addNewNotif.bind(this)}>Add me</p>
                 </section>
             </Ons.Page>
         );
