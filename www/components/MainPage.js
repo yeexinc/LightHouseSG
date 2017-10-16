@@ -99,8 +99,12 @@ export class MainPage extends React.Component {
         return t;
     }
 
+    openAddErrandForm() {
+        this.navigator.pushPage({ component: this.createAddErrandForm.bind(this), key: 'add-errand-form' });
+    }
+
     createAddErrandForm() {
-        this.navigator.pushPage({ component: AddErrandForm, key: 'add-errand-form' });
+        return <AddErrandForm navigator={this.navigator}/>
     }
 
     render() {
@@ -112,7 +116,7 @@ export class MainPage extends React.Component {
                     margin: '0px 0px 45px 0px'
                 }}
                 ripple mini
-                position='bottom right' onClick={this.createAddErrandForm.bind(this)}>
+                position='bottom right' onClick={this.openAddErrandForm.bind(this)}>
                 <i className="fa fa-plus"></i>
             </Ons.Fab> : null;
         }
@@ -152,12 +156,48 @@ class ExamplePage extends React.Component {
 }
 
 class AddErrandForm extends React.Component {
-    constructor() {
-        super();
-
+    constructor(props) {
+        super(props);
+        console.log(props);
         this.state = {
-            errandName: ''
+            errandTitle: '',
+            description: '',
+            tags: '' //change to list later
         }
+    }
+
+    handleTitle(event) {
+        this.setState({errandTitle: event.target.value});
+        console.log("Title: ", event.target.value);
+    }
+
+    handleDescription(event) {
+        this.setState({description: event.target.value});
+        console.log("Description: ", event.target.value);
+    }
+
+    handleTags(event) {
+        
+        this.setState({tags: event.target.value});
+        console.log("Tags: ", event.target.value);
+    }
+
+    handleSubmit() {
+        var navigator = this.props.navigator;
+        if (this.state.errandTitle != '' && this.state.description != ''){ // && this.state.tags != ''){
+            ons.notification.confirm('Are you sure you want to submit this errand?')
+            .then((response) => {
+                if (response === 1) {
+                    console.log("OK!");
+                    // DBcontroller ajax call to submit errand to server
+                    navigator.popPage();
+                }
+                else {
+                    console.log("CANCEL");
+                }
+            });
+        }
+
     }
 
     renderToolbar() {
@@ -194,7 +234,8 @@ class AddErrandForm extends React.Component {
                 <ul className="list">
                     <li className="list-item">
                         <div className="list-item__center">
-                            <input type="text" className="text-input" placeholder="Title of the errand" />
+                            <input type="text" className="text-input" placeholder="Title of the errand" 
+                                onChange={this.handleTitle.bind(this)}/>
                         </div>
                     </li>
                 </ul>
@@ -202,7 +243,8 @@ class AddErrandForm extends React.Component {
                 <ul className="list">
                     <li className="list-item">
                         <div className="list-item__center">
-                            <textarea className="textarea textarea--transparent" placeholder="Describe what is needed to be done"></textarea>
+                            <textarea className="textarea textarea--transparent" placeholder="Describe what is needed to be done" 
+                                onChange={this.handleDescription.bind(this)}></textarea>
                         </div>
                     </li>
                 </ul>
@@ -211,10 +253,16 @@ class AddErrandForm extends React.Component {
                 <ul className="list">
                     <li className="list-item">
                         <div className="list-item__center">
-                            <input type="text" className="text-input" placeholder="Tags (e.g. ride, clean)" />
+                            <input type="text" className="text-input" placeholder="Tags (e.g. ride, clean)" 
+                                onChange={this.handleTags.bind(this)}/>
                         </div>
                     </li>
                 </ul>
+
+                <div className="pageContent center">
+                    <Ons.Button onClick={this.handleSubmit.bind(this)}>Submit</Ons.Button>
+                </div>
+                 
             </Ons.Page>
         )
     }
