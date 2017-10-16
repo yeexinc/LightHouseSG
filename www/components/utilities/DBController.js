@@ -71,6 +71,16 @@ export class DBController extends React.Component {
         callbackFunc(result);
     }
 
+    // Get the matched errands for notifications page
+    getPendingErrands(userID, callbackFunc) {
+        // Do the AJAX call here
+        // ...
+
+        //var result = this.dbStub.getListedErrands(userID);
+        //callbackFunc(result);
+        return this.dbStub.getPendingErrands(userID);
+    }
+
     onSuccess(data) {
         console.log("API call successful. Returning " + data.status);
         return data.status;

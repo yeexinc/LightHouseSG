@@ -66,7 +66,7 @@ export class MainPage extends React.Component {
                     break;
                 case 'Search':
                     t.push({
-                        content: <SearchPage user={this.user} key='search-page' />,
+                        content: <SearchPage user={this.user} key='search-page' navigator={this.navigator} database={this.database} user={this.user} />,
                         tab: <Ons.Tab label='Search' icon='fa-search' key='search-page-key' />
                     });
                     break;
@@ -85,7 +85,7 @@ export class MainPage extends React.Component {
                     break;
                 case 'Settings':
                     t.push({
-                        content: <SettingsPage user={this.user} logout={this.logout.bind(this)}key='settings-page' />,
+                        content: <SettingsPage user={this.user} logout={this.logout.bind(this)} key='settings-page' />,
                         tab: <Ons.Tab label='Settings' icon='fa-cog' key='settings-page-key' />
                     });
                     break;

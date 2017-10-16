@@ -53,7 +53,7 @@ export class Errand extends React.Component {
         var userLink = this.beneName;
         if (this.navigator != null && this.database != null) {
             if (this.props.userType == 'beneficiary') {
-                userLink = <p className="postedDate"><span className="orange">Pending</span></p>;
+                userLink = <p className="postedDate"><span className="orange">Awaiting response</span></p>;
                 if (this.shouldDisplayVol) {
                     userLink = <p className="postedDate"><span className="green">Accepted</span> by <UserLink userID={this.volID} userName={this.volName} navigator={this.navigator} database={this.database} /> on {this.errand.postedDate}</p>
                 }
@@ -101,6 +101,16 @@ export class NotifErrand extends Errand {
 
         // Calculate the expiry time somehow?
         this.expiryTime = "4 hours";
+
+        // For notifs, we need to have accept/reject buttons
+        this.responseBtns = <div className="center">
+            <span className="respondBtnContainer green" onClick={this.onAcceptBtnClicked.bind(this)}>
+                <i className="fa fa-check-circle fa-2x"></i>
+                <br />Accept</span>
+            <span className="respondBtnContainer red" onClick={this.onRejectBtnClicked.bind(this)}>
+                <i className="fa fa-times-circle fa-2x"></i>
+                <br />Reject</span>
+        </div>;
     }
 
     onAcceptBtnClicked() {
@@ -112,7 +122,7 @@ export class NotifErrand extends Errand {
     }
 
     render() {
-        var userLink = userLink = <p className="postedDate">Submitted by <UserLink userID={this.beneID} userName={this.beneName} navigator={this.navigator} database={this.database} /> on {this.errand.postedDate}</p>
+        var userLink = <p className="postedDate">Submitted by <UserLink userID={this.beneID} userName={this.beneName} navigator={this.navigator} database={this.database} /> on {this.errand.postedDate}</p>
 
         var expiryText = null;
         if (this.expiryTime != null) {
@@ -125,15 +135,41 @@ export class NotifErrand extends Errand {
             <p className="tags">{this.errand.tags}</p>
         </div>
 
-        // For notifs, we need to have accept/reject buttons
-        var respondBtns = <div className="center">
-            <span className="respondBtnContainer green" onClick={this.onAcceptBtnClicked.bind(this)}>
-                <i className="fa fa-check-circle fa-2x"></i>
-                <br/>Accept</span>
-            <span className="respondBtnContainer red" onClick={this.onRejectBtnClicked.bind(this)}>
-                <i className="fa fa-times-circle fa-2x"></i>
-                <br/>Reject</span>
-            </div>;
+        return (
+            <Ons.Card>
+                <section className="errandCard">
+                    <i className="fa fa-thumb-tack fa-2x tack"></i><h1>{this.errand.title}</h1>
+                    {userLink}
+                    {details}
+                    {expiryText}
+                    {this.responseBtns}
+                </section>
+            </Ons.Card>
+        )
+    }
+}
+
+export class PendingErrand extends NotifErrand {
+    constructor(props) {
+        super(props);
+
+        // Calculate the expiry time somehow?
+        this.expiryTime = "4 hours";
+    }
+
+    render() {
+        var userLink = <p className="postedDate">Submitted by <UserLink userID={this.beneID} userName={this.beneName} navigator={this.navigator} database={this.database} /> on {this.errand.postedDate}<br/><span className="orange">Pending</span></p>
+
+        var expiryText = null;
+        if (this.expiryTime != null) {
+            expiryText = <span className="red">This request expires in {this.expiryTime}.</span>
+        }
+
+        // For notifs, no expand button needed
+        var details = <div>
+            <p>{this.errand.description}</p>
+            <p className="tags">{this.errand.tags}</p>
+        </div>
 
         return (
             <Ons.Card>
@@ -142,7 +178,7 @@ export class NotifErrand extends Errand {
                     {userLink}
                     {details}
                     {expiryText}
-                    {respondBtns}
+                    {this.responseBtns}
                 </section>
             </Ons.Card>
         )

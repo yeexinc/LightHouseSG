@@ -9,13 +9,14 @@ export class DBStub extends React.Component {
         this.sampleUsers = [];
         this.sampleErrands = [];
         this.sampleCompletedErrands = [];
+        this.samplePendingErrands = [];
 
         var sampleVol1 = {
             "userID": 1,
             "accName": "a",
-            "userType" : "volunteer",
+            "userType": "volunteer",
             "email": "aaaa@lighthousesg.com",
-            "postalCode" : "12345",
+            "postalCode": "12345",
             "phoneNumber": "+6537463777",
             "createdDate": "12 Oct 2017",
             "organization": "Nanyang Technological University",
@@ -29,7 +30,7 @@ export class DBStub extends React.Component {
         var sampleBene1 = {
             "userID": 2,
             "accName": "Ben",
-            "userType" : "beneficiary",
+            "userType": "beneficiary",
             "email": "benedict@lighthousesg.com",
             "postalCode": "03764",
             "phoneNumber": "+658888BBBB",
@@ -42,7 +43,7 @@ export class DBStub extends React.Component {
         var sampleBene2 = {
             "userID": 3,
             "accName": "Pikachu",
-            "userType" : "beneficiary",
+            "userType": "beneficiary",
             "email": "gottacatchthemall@lighthousesg.com",
             "postalCode": "22222",
             "phoneNumber": "+65thunderbolt",
@@ -51,9 +52,23 @@ export class DBStub extends React.Component {
             "gender": "Male",
             "completedErrands": []
         }
+
+        var sampleBene3 = {
+            "userID": 4,
+            "accName": "Jane",
+            "userType": "beneficiary",
+            "email": "jenny@lighthousesg.com",
+            "postalCode": "1236543",
+            "phoneNumber": "+6530023002",
+            "createdDate": "12 Oct 2017",
+            "organization": "None",
+            "gender": "Female",
+            "completedErrands": []
+        }
         this.sampleUsers.push(sampleVol1);
         this.sampleUsers.push(sampleBene1);
         this.sampleUsers.push(sampleBene2);
+        this.sampleUsers.push(sampleBene3);
 
         var sampleErrand1 = {
             "beneID": 2,
@@ -99,6 +114,34 @@ export class DBStub extends React.Component {
         }
         this.sampleCompletedErrands.push(sampleCompletedErrand1);
         this.sampleCompletedErrands.push(sampleCompletedErrand2);
+
+        //////////////////////////////////////////////
+        var samplePendingErrand1 = {
+            "beneID": 4,
+            "beneName": "Jane",
+            "volID": null,
+            "status": "pending",
+            "title": "Post office",
+            "description": "There is a parcel that I need to redeem from the post office. Can someone give me a ride there? It will take around 15 minutes to get to the office.",
+            "postedDate": "13 Oct, 2:15pm",
+            "tags": "#ride #drive",
+            "beneRate": null,
+            "beneComment": null
+        }
+        var samplePendingErrand2 = {
+            "beneID": 3,
+            "beneName": "Pikachu",
+            "volID": null,
+            "status": "pending",
+            "title": "Paying bills",
+            "description": "I'm unable to access the online bill paying system. I would like some help paying the bills in different locations.",
+            "postedDate": "13 Oct, 2:15pm",
+            "tags": "#payment #bills #drive",
+            "beneRate": null,
+            "beneComment": null
+        }
+        this.samplePendingErrands.push(samplePendingErrand1);
+        this.samplePendingErrands.push(samplePendingErrand2);
         console.log("Database stub initialized");
     }
 
@@ -119,5 +162,10 @@ export class DBStub extends React.Component {
     getListedErrands(userID) {
         // for testing, userID is not used
         return this.sampleErrands;
+    }
+
+    getPendingErrands(userID) {
+        // for testing, userID is not used
+        return this.samplePendingErrands;
     }
 }
