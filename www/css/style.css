@@ -141,6 +141,10 @@ errandCard p {
     color: red;
 }
 
-textarea {
-    width:100%;
+.addErrandTextarea, .addErrandInput {
+    width: 100%;
+}
+
+.addErrandTextarea {
+    height: 220px;
 }

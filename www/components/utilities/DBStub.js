@@ -8,6 +8,7 @@ export class DBStub extends React.Component {
         super(props);
         this.sampleUsers = [];
         this.sampleErrands = [];
+        this.sampleListedErrands = [];
         this.sampleCompletedErrands = [];
         this.samplePendingErrands = [];
 
@@ -83,6 +84,21 @@ export class DBStub extends React.Component {
             "beneComment": null
         }
         this.sampleErrands.push(sampleErrand1);
+
+        ///////////////////////////////////////////
+        var sampleListedErrand1 = {
+            "beneID": 2,
+            "beneName": "Ben",
+            "volID": null,
+            "status": "listed",
+            "title": "CZ3007 Assignment",
+            "description": "I don't know how to do my assignment and idk what the lecturer is talking about :( please help me with this",
+            "postedDate": "13 Oct, 2:15pm",
+            "tags": "#assignment #lol #this #is #just #a #sample #errand #in #the #notif #page",
+            "beneRate": null,
+            "beneComment": null
+        }
+        this.sampleListedErrands.push(sampleListedErrand1);
 
         ///////////////////////////////////////////
         var sampleCompletedErrand1 = {
@@ -161,7 +177,7 @@ export class DBStub extends React.Component {
 
     getListedErrands(userID) {
         // for testing, userID is not used
-        return this.sampleErrands;
+        return this.sampleListedErrands;
     }
 
     getPendingErrands(userID) {

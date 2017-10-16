@@ -234,8 +234,8 @@ class AddErrandForm extends React.Component {
                 <ul className="list">
                     <li className="list-item">
                         <div className="list-item__center">
-                            <input type="text" className="text-input" placeholder="Title of the errand" 
-                                onChange={this.handleTitle.bind(this)}/>
+                            <input type="text" className="addErrandInput text-input" placeholder="Title of the errand" 
+                                onChange={this.handleTitle.bind(this)} maxLength={50}/>
                         </div>
                     </li>
                 </ul>
@@ -243,8 +243,8 @@ class AddErrandForm extends React.Component {
                 <ul className="list">
                     <li className="list-item">
                         <div className="list-item__center">
-                            <textarea className="textarea textarea--transparent" placeholder="Describe what is needed to be done" 
-                                onChange={this.handleDescription.bind(this)}></textarea>
+                            <textarea className="addErrandTextarea textarea--transparent" placeholder="Describe what is needed to be done" 
+                                onChange={this.handleDescription.bind(this)} maxLength={400}></textarea>
                         </div>
                     </li>
                 </ul>
@@ -253,8 +253,8 @@ class AddErrandForm extends React.Component {
                 <ul className="list">
                     <li className="list-item">
                         <div className="list-item__center">
-                            <input type="text" className="text-input" placeholder="Tags (e.g. ride, clean)" 
-                                onChange={this.handleTags.bind(this)}/>
+                            <input type="text" className="addErrandInput text-input" placeholder="Tags (e.g. ride, clean)" 
+                                onChange={this.handleTags.bind(this)} maxLength={50}/>
                         </div>
                     </li>
                 </ul>

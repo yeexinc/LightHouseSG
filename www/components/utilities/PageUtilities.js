@@ -103,22 +103,36 @@ export class NotifErrand extends Errand {
         this.expiryTime = "4 hours";
 
         // For notifs, we need to have accept/reject buttons
-        this.responseBtns = <div className="center">
-            <span className="respondBtnContainer green" onClick={this.onAcceptBtnClicked.bind(this)}>
-                <i className="fa fa-check-circle fa-2x"></i>
-                <br />Accept</span>
-            <span className="respondBtnContainer red" onClick={this.onRejectBtnClicked.bind(this)}>
-                <i className="fa fa-times-circle fa-2x"></i>
-                <br />Reject</span>
-        </div>;
+        this.acceptBtn = <span className="respondBtnContainer green" onClick={this.onAcceptBtnClicked.bind(this)}>
+            <i className="fa fa-check-circle fa-2x"></i>
+            <br />Accept</span>;
+        this.rejectBtn = <span className="respondBtnContainer red" onClick={this.onRejectBtnClicked.bind(this)}>
+            <i className="fa fa-times-circle fa-2x"></i>
+            <br />Reject</span>;
     }
 
     onAcceptBtnClicked() {
-        this.props.onRespondBtnClicked(true);
+        ons.notification.confirm('Are you sure you want to accept this request?')
+            .then((response) => {
+                if (response === 1) {
+                    this.props.onRespondBtnClicked(true);
+                }
+                else {
+                    console.log("Acceptance cancelled");
+                }
+            });
     }
 
     onRejectBtnClicked() {
-        this.props.onRespondBtnClicked(false);
+        ons.notification.confirm('Are you sure you want to reject this errand?')
+            .then((response) => {
+                if (response === 1) {
+                    this.props.onRespondBtnClicked(false);
+                }
+                else {
+                    console.log("Rejection cancelled");
+                }
+            });
     }
 
     render() {
@@ -142,7 +156,9 @@ export class NotifErrand extends Errand {
                     {userLink}
                     {details}
                     {expiryText}
-                    {this.responseBtns}
+                    <div className="center">
+                        {this.acceptBtn}{this.rejectBtn}
+                    </div>
                 </section>
             </Ons.Card>
         )
@@ -158,7 +174,7 @@ export class PendingErrand extends NotifErrand {
     }
 
     render() {
-        var userLink = <p className="postedDate">Submitted by <UserLink userID={this.beneID} userName={this.beneName} navigator={this.navigator} database={this.database} /> on {this.errand.postedDate}<br/><span className="orange">Pending</span></p>
+        var userLink = <p className="postedDate">Submitted by <UserLink userID={this.beneID} userName={this.beneName} navigator={this.navigator} database={this.database} /> on {this.errand.postedDate}<br /><span className="orange">Pending</span></p>
 
         var expiryText = null;
         if (this.expiryTime != null) {
@@ -178,7 +194,9 @@ export class PendingErrand extends NotifErrand {
                     {userLink}
                     {details}
                     {expiryText}
-                    {this.responseBtns}
+                    <div className="center">
+                        {this.acceptBtn}
+                    </div>
                 </section>
             </Ons.Card>
         )
