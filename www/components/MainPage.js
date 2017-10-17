@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Creatable from 'react-select';
 import * as Ons from 'react-onsenui';
 import * as ons from 'onsenui';
 
@@ -104,7 +105,7 @@ export class MainPage extends React.Component {
     }
 
     createAddErrandForm() {
-        return <AddErrandForm navigator={this.navigator}/>
+        return <AddErrandForm navigator={this.navigator} database={this.database}/>
     }
 
     render() {
@@ -158,11 +159,23 @@ class ExamplePage extends React.Component {
 class AddErrandForm extends React.Component {
     constructor(props) {
         super(props);
-        console.log(props);
+
+        this.database = props.database;
+        this.errandTags = [];
+        this.tagOptions = [];
+
         this.state = {
             errandTitle: '',
             description: '',
-            tags: '' //change to list later
+            tags: []
+        }
+    }
+
+    componentWillMount() {
+        this.errandTags = this.database.getErrandTags();
+        console.log(this.errandTags);
+        for (var i = 0; i < this.errandTags.length; i++ ) {
+            this.tagOptions.push({value: this.errandTags[i], label: '#' + this.errandTags[i]});
         }
     }
 
@@ -176,10 +189,19 @@ class AddErrandForm extends React.Component {
         console.log("Description: ", event.target.value);
     }
 
-    handleTags(event) {
-        
-        this.setState({tags: event.target.value});
-        console.log("Tags: ", event.target.value);
+    handleTags(value) {
+        console.log(value)
+        this.setState({tags: value});
+    }
+
+    // not complete yet
+    handleAddTags(event) {
+        if (event.keyCode == 13){
+            console.log(event.target.value);
+            this.errandTags.push(event.target.value);
+            this.tagOptions.push({value: event.target.value, label: '#' + event.target.value});
+            this.setState({tags: value});
+        }
     }
 
     handleSubmit() {
@@ -189,6 +211,13 @@ class AddErrandForm extends React.Component {
             .then((response) => {
                 if (response === 1) {
                     console.log("OK!");
+                    var title = this.state.errandTitle;
+                    var description = this.state.description;
+                    var taglist = [];
+                    this.state.tags.map((tag) => {
+                        taglist.push(tag.value);
+                    })
+                    console.log(taglist);
                     // DBcontroller ajax call to submit errand to server
                     navigator.popPage();
                 }
@@ -197,9 +226,12 @@ class AddErrandForm extends React.Component {
                 }
             });
         }
+        else {
+            ons.notification.alert("Please enter all required Errand information!");
+        }
 
     }
-
+    
     renderToolbar() {
         // note: repeated codes from LoginPage.js
         return (
@@ -209,7 +241,7 @@ class AddErrandForm extends React.Component {
                         Back
                     </Ons.BackButton>
                 </div>
-                <div className='center'>Submit new errand</div>
+                <div className='center'>Submit New Errand</div>
             </Ons.Toolbar>
         );
     }
@@ -250,15 +282,15 @@ class AddErrandForm extends React.Component {
                 </ul>
 
                 <br />
-                <ul className="list">
-                    <li className="list-item">
-                        <div className="list-item__center">
-                            <input type="text" className="addErrandInput text-input" placeholder="Tags (e.g. ride, clean)" 
-                                onChange={this.handleTags.bind(this)} maxLength={50}/>
-                        </div>
-                    </li>
-                </ul>
-
+                <Creatable
+                    name="tag-input"
+                    placeholder="Tags (e.g. ride, clean)"
+                    value={this.state.tags}
+                    options={this.tagOptions}
+                    multi={true}
+                    onChange={this.handleTags.bind(this)}
+                    /* onInputKeyDown={this.handleAddTags.bind(this)} */
+                />
                 <div className="pageContent center">
                     <Ons.Button onClick={this.handleSubmit.bind(this)}>Submit</Ons.Button>
                 </div>

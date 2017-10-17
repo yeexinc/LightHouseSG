@@ -81,6 +81,14 @@ export class DBController extends React.Component {
         return this.dbStub.getPendingErrands(userID);
     }
 
+    // get a number of the most popular tags
+    getErrandTags() {
+        // Do the AJAX call here
+        // ...
+
+        return this.dbStub.getErrandTags(); 
+    }
+
     onSuccess(data) {
         console.log("API call successful. Returning " + data.status);
         return data.status;
