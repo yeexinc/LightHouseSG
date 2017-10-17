@@ -7,14 +7,7 @@ import { UserPage } from '../UserPage';
 
 /* Shared utilities for different pages */
 
-/* The Errand object to be displayed on the Errands page or Notifications 
-page. Since this errand has not yet been completed, it will not be shown 
-on any user's page. 
-
-The Errand object only has the user ID and user name (to display links.)
-When the link is clicked on, it will create a new UserPage, which will fetch
-the associated user object from the database.
-*/
+// An abstract Errand class without any render function
 export class Errand extends React.Component {
     constructor(props) {
         super(props);
@@ -22,18 +15,7 @@ export class Errand extends React.Component {
         this.beneID = props.errand.beneID;
         this.beneName = props.errand.beneName;
 
-        this.shouldDisplayVol = false;
         this.onExpand = this.onExpand.bind(this);
-
-        /* If the logged in user is a beneficiary, check if the errand has 
-        been taken up by a volunteer. If there is, display status as 
-        "Accepted by ___". If there is not, display "Pending" */
-        if (props.userType == 'beneficiary') {
-            if (props.volID != null && props.volName != null) {
-                // Set the flag to display relevant info
-                this.shouldDisplayVol = true;
-            }
-        }
 
         // To create user link
         this.navigator = props.navigator;
@@ -48,59 +30,15 @@ export class Errand extends React.Component {
     onExpand() {
         this.setState({ expanded: true });
     }
-
-    render() {
-        var userLink = this.beneName;
-        if (this.navigator != null && this.database != null) {
-            if (this.props.userType == 'beneficiary') {
-                userLink = <p className="postedDate"><span className="orange">Awaiting response</span></p>;
-                if (this.shouldDisplayVol) {
-                    userLink = <p className="postedDate"><span className="green">Accepted</span> by <UserLink userID={this.volID} userName={this.volName} navigator={this.navigator} database={this.database} /> on {this.errand.postedDate}</p>
-                }
-            }
-            else {
-                userLink = <p className="postedDate">Submitted by <UserLink userID={this.beneID} userName={this.beneName} navigator={this.navigator} database={this.database} /> on {this.errand.postedDate}</p>
-            }
-        }
-
-        var expandButton = null;
-        var details = null;
-        if (!this.state.expanded) {
-            expandButton = <span className="expandBtn" onClick={this.onExpand}>▼ Expand ▼</span>;
-            var desc = this.errand.description;
-            if (this.errand.description.length > 80) {
-                desc = desc.slice(0, 80) + "...";
-            }
-            details = <div>
-                {desc}
-                {expandButton}
-            </div>;
-        }
-        else {
-            details = <div>
-                <p>{this.errand.description}</p>
-                <p className="tags">{this.errand.tags}</p>
-            </div>;
-        }
-
-        return (
-            <Ons.Card>
-                <section className="errandCard">
-                    <i className="fa fa-thumb-tack fa-2x tack"></i><h1>{this.errand.title}</h1>
-                    {userLink}
-                    {details}
-                </section>
-            </Ons.Card>
-        )
-    }
 }
 
-export class NotifErrand extends Errand {
+// Errand class with Accept / Reject buttons
+export class AccRejErrand extends Errand {
     constructor(props) {
         super(props);
 
         // Calculate the expiry time somehow?
-        this.expiryTime = "4 hours";
+        this.expiryTime = "24 hours";
 
         // For notifs, we need to have accept/reject buttons
         this.acceptBtn = <span className="respondBtnContainer green" onClick={this.onAcceptBtnClicked.bind(this)}>
@@ -115,7 +53,7 @@ export class NotifErrand extends Errand {
         ons.notification.confirm('Are you sure you want to accept this request?')
             .then((response) => {
                 if (response === 1) {
-                    this.props.onRespondBtnClicked(true);
+                    this.props.onRespondBtnClicked(true, this.errand.errID);
                 }
                 else {
                     console.log("Acceptance cancelled");
@@ -127,12 +65,18 @@ export class NotifErrand extends Errand {
         ons.notification.confirm('Are you sure you want to reject this errand?')
             .then((response) => {
                 if (response === 1) {
-                    this.props.onRespondBtnClicked(false);
+                    this.props.onRespondBtnClicked(false, this.errand.errID);
                 }
                 else {
                     console.log("Rejection cancelled");
                 }
             });
+    }
+}
+
+export class NotifErrand extends AccRejErrand {
+    constructor(props) {
+        super(props);
     }
 
     render() {
@@ -165,12 +109,9 @@ export class NotifErrand extends Errand {
     }
 }
 
-export class PendingErrand extends NotifErrand {
+export class PendingErrand extends AccRejErrand {
     constructor(props) {
         super(props);
-
-        // Calculate the expiry time somehow?
-        this.expiryTime = "4 hours";
     }
 
     render() {
@@ -201,7 +142,175 @@ export class PendingErrand extends NotifErrand {
             </Ons.Card>
         )
     }
+}
 
+// Errand where the volunteer has offered to accept the request,
+// and is waiting for the beneficiary to accept/reject the offer
+export class OfferErrand extends AccRejErrand {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        var userLink = this.beneName;
+        var showRespondButtons = false;
+        var shouldDisplayVol = false;
+
+        if (this.props.userType == 'beneficiary') {
+            if (this.props.volID != null && this.props.volName != null) {
+                // Set the flag to display relevant info
+                shouldDisplayVol = true;
+            }
+        }
+
+        if (this.navigator != null && this.database != null) {
+            if (this.props.userType == 'beneficiary') { // If the logged in user is a beneficiary
+                // Display that the errand is waiting for an offer from a volunteer
+                if (!shouldDisplayVol) {
+                    userLink = <p className="postedDate"><span className="orange">Awaiting response</span></p>;
+                }
+                else { // If a volunteer has given an offer
+                    userLink = <p className="postedDate">
+                        <span className="orange">Offered</span> by <UserLink userID={this.props.volID} userName={this.props.volName} navigator={this.navigator} database={this.database} /> on {this.props.updatedDate}</p>;
+                    showRespondButtons = true; // Show the accept/reject buttons
+                }
+            }
+            else { // If the user a volunteer,
+                userLink = <p className="postedDate">
+                    <span className="orange">Awaiting response</span> from <UserLink userID={this.beneID} userName={this.beneName} navigator={this.navigator} database={this.database} /></p>;
+            }
+        }
+
+        var expandButton = null;
+        var details = null;
+        if (!this.state.expanded) {
+            expandButton = <span className="expandBtn" onClick={this.onExpand}>▼ Expand ▼</span>;
+            var desc = this.errand.description;
+            if (this.errand.description.length > 80) {
+                desc = desc.slice(0, 80) + "...";
+            }
+            details = <div>
+                {desc}
+                {expandButton}
+            </div>;
+        }
+        else {
+            details = <div>
+                <p>{this.errand.description}</p>
+                <p className="tags">{this.errand.tags}</p>
+            </div>;
+        }
+
+        var buttons = (showRespondButtons) ?
+            <div className="center">
+                {this.acceptBtn}
+                {this.rejectBtn}
+            </div> : null;
+
+        return (
+            <Ons.Card>
+                <section className="errandCard">
+                    <i className="fa fa-thumb-tack fa-2x tack"></i><h1>{this.errand.title}</h1>
+                    {userLink}
+                    {details}
+                    {buttons}
+                </section>
+            </Ons.Card>
+        )
+    }
+}
+
+// This is not exactly the same as AccRejErrand but inherited for clarity
+export class AcceptedErrand extends AccRejErrand {
+    constructor(props) {
+        super(props);
+
+        //// Overwrite the parent's accept button
+        this.acceptBtn = <Ons.Button onClick={this.openConcludeErrandForm.bind(this)}>
+            Conclude errand
+        </Ons.Button>
+    }
+
+    // Overwrite the function in parent class
+    onAcceptBtnClicked(comment, rating) {
+        ons.notification.confirm('Are you sure you want to conclude this errand with this comment and rating?')
+            .then((response) => {
+                if (response === 1) {
+                    console.log("Concluding errand with " + comment + ", " + rating);
+                    this.props.onRespondBtnClicked(true, this.errand.errID, comment, rating);
+                    this.navigator.popPage();
+                }
+                else {
+                    console.log("Cancelled concluding errand");
+                }
+            });
+    }
+
+    openConcludeErrandForm() {
+        this.navigator.pushPage({ component: this.createConcludeErrandForm.bind(this), key: 'conclude-errand-form' });
+    }
+
+    createConcludeErrandForm() {
+        return <ConcludeErrandForm navigator={this.navigator} onConcludeBtnClicked={this.onAcceptBtnClicked.bind(this)} />
+    }
+
+    render() {
+        var userLink = this.beneName;
+        var showConcludeButton = false;
+
+        if (this.props.userType == 'beneficiary') {
+            showConcludeButton = true;
+        }
+
+        if (this.navigator != null && this.database != null) {
+            if (this.props.userType == 'beneficiary') { // If the logged in user is a beneficiary
+                userLink = <p className="postedDate">
+                    <span className="green">Accepted</span> by <UserLink userID={this.props.volID} userName={this.props.volName} navigator={this.navigator} database={this.database} /> on {this.errand.updatedDate}</p>;
+                showConcludeButton = true; // Show the accept/reject buttons
+            }
+            else { // If the user a volunteer,
+                userLink = <p className="postedDate">
+                    Submitted by <UserLink userID={this.beneID} userName={this.beneName} navigator={this.navigator} database={this.database} /> on {this.errand.postedDate}</p>;
+            }
+        }
+
+        var expandButton = null;
+        var details = null;
+        if (!this.state.expanded) {
+            expandButton = <span className="expandBtn" onClick={this.onExpand}>▼ Expand ▼</span>;
+            var desc = this.errand.description;
+            if (this.errand.description.length > 80) {
+                desc = desc.slice(0, 80) + "...";
+            }
+            details = <div>
+                {desc}
+                {expandButton}
+            </div>;
+        }
+        else {
+            details = <div>
+                <p>{this.errand.description}</p>
+                <p className="tags">{this.errand.tags}</p>
+            </div>;
+        }
+
+        var concludeButton = (showConcludeButton) ?
+            <div className="center">
+                {this.acceptBtn}
+            </div> : null;
+
+        return (
+            <Ons.Card>
+                <section className="errandCard">
+                    <i className="fa fa-thumb-tack fa-2x tack"></i><h1>{this.errand.title}</h1>
+                    {userLink}
+                    {details}
+                    <br />
+                    {concludeButton}
+                </section>
+            </Ons.Card>
+        )
+    }
 }
 
 
@@ -245,12 +354,11 @@ export class CompletedErrand extends Errand {
             else {
                 userLink = <UserLink userID={this.volID} userName={this.volName} navigator={this.navigator} database={this.database} />;
 
-                completedBy = <p className="postedDate">Completed by {userLink} on {this.errand.postedDate}</p>
+                completedBy = <p className="postedDate">Completed by {userLink} on {this.errand.updatedDate}</p>
             }
         }
         else {
-            // **** TODO: replace this with completedDate
-            completedBy = <p className="postedDate">Completed on {this.errand.postedDate}</p>;
+            completedBy = <p className="postedDate">Completed on {this.errand.updatedDate}</p>;
         }
 
         var comment = null;
@@ -359,4 +467,99 @@ export class PageToolbar extends React.Component {
                 <div className='center'>{this.title}</div>
             </Ons.Toolbar>)
     }
+}
+
+
+class ConcludeErrandForm extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.onConcludeBtnClicked = props.onConcludeBtnClicked;
+
+        this.state = {
+            comment: '',
+            rating: 0,
+            hoveredRating: 0
+        }
+    }
+
+    onCommentChange(e) {
+        this.setState({ comment: e.target.value });
+        console.log("Comment: ", e.target.value);
+    }
+
+    onStarClicked(e) {
+        this.setState({ rating: e.target.value });
+    }
+
+    onStarMouseOver(e) {
+        this.setState({ hoveredRating: e.target.value });
+    }
+
+    onStarMouseLeave() {
+        this.setState({ hoveredRating: 0 });
+    }
+
+    onFormSubmit() {
+        this.props.onConcludeBtnClicked(this.state.comment, this.state.rating);
+    }
+
+    renderToolbar() {
+        return <PageToolbar title="Conclude Errand" hasBackBtn={true} />;
+    }
+
+    render() {
+        var stars = [];
+        var rating = (this.state.hoveredRating > 0) ? this.state.hoveredRating : this.state.rating;
+
+        for (var i = 1; i <= rating; i++) {
+            var key = "rating-star-" + i;
+            stars.push(<button className="fa fa-star fa-2x" onMouseOver={this.onStarMouseOver.bind(this)} onMouseLeave={this.onStarMouseLeave.bind(this)} onClick={this.onStarClicked.bind(this)} value={i} key={key} />);
+        }
+        var j = rating * 1 + 1;
+        while (j <= 5) {
+            var key = "rating-star-" + j;
+            stars.push(<button className="fa fa-star-o fa-2x" onMouseOver={this.onStarMouseOver.bind(this)} onMouseLeave={this.onStarMouseLeave.bind(this)} onClick={this.onStarClicked.bind(this)} value={j} key={key} />);
+            j++;
+        }
+
+        return (
+            <Ons.Page renderToolbar={this.renderToolbar.bind(this)}>
+                <br />
+                <ul className="list">
+                    <li className="list-item">
+                        <div className="list-item__center">
+                            <textarea className="addErrandTextarea textarea--transparent" placeholder="Comment on how the errand went."
+                                onChange={this.onCommentChange.bind(this)} maxLength={400}></textarea>
+                        </div>
+                    </li>
+                </ul>
+
+                <section className="pageContent">
+                    Rate this volunteer:
+                    <div className="ratingBtn">
+                        {stars}
+                    </div>
+                    <br />
+                    <div className="center">
+                        <Ons.Button onClick={this.onFormSubmit.bind(this)}>
+                            Conclude errand
+                            </Ons.Button>
+                    </div>
+                </section>
+            </Ons.Page>
+        )
+    }
+}
+
+export function currentDateTime() {
+    var curTime = new Date();
+
+    var dateStr = curTime.toDateString().split(' '); // e.g. [Wed, Oct, 18, 2017]
+    var fullTimeStr = curTime.toTimeString().split(' ')[0]; // e.g. 10:15:25
+    var timeStr = fullTimeStr.split(':'); // e.g. [10, 15, 25]
+
+    var formattedDateTime = dateStr[1] + " " + dateStr[2] + ", " + timeStr[0] + ":" + timeStr[1];
+    return formattedDateTime;
 }

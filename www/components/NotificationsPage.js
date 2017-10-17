@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import * as Ons from 'react-onsenui';
 import * as ons from 'onsenui';
 
-import { LoadingSection, NotifErrand } from './utilities/PageUtilities';
+import { LoadingSection, NotifErrand, currentDateTime } from './utilities/PageUtilities';
 
 export class NotificationsPage extends React.Component {
     constructor(props) {
@@ -15,10 +15,12 @@ export class NotificationsPage extends React.Component {
         this.onNotifsLoaded = this.onNotifsLoaded.bind(this);
         this.onRespondBtnClicked = this.onRespondBtnClicked.bind(this);
 
-        this.notifs = null;
+        this.notifs = [];
         this.state = {
             notifsLoaded: false
         }
+
+        this.database.registerNewNotifCallback(this.onNewNotifsAdded.bind(this));
     }
 
     componentWillMount() {
@@ -31,12 +33,35 @@ export class NotificationsPage extends React.Component {
         this.setState({ notifsLoaded: true });
     }
 
-    onRespondBtnClicked(respond) {
-        if (respond) {
-            console.log("The request has been accepted.");
+    onRespondBtnClicked(respond, errID) {
+        if (respond, errID) {
+            var offeredErrand = this.onNotifAccepted(errID);
+            this.database.addNewOffer(offeredErrand);
         }
         else {
             console.log("The request has been rejected.");
+        }
+    }
+
+    onNewNotifsAdded(newErrand) {
+        this.notifs.push(newErrand);
+        this.setState({ notifsLoaded: true });
+    }
+
+    onNotifAccepted(errID) {
+        for (var i = 0; i < this.notifs.length; i++) {
+            if (this.notifs[i].errID == errID) {
+                var x = this.notifs[i]; // get the errand
+                this.notifs.splice(i, 1); // remove the errand from notifs
+
+                // ASSIGN THE INFORMATION OF VOLUNTEER WHO OFFERED
+                x.volID = this.user.userID;
+                x.volName = this.user.accName;
+                x.status = "offered";
+                x.updatedDate = currentDateTime();
+                this.setState({ notifsLoaded: true }); // refresh the UI
+                return x;
+            }
         }
     }
 
@@ -53,7 +78,7 @@ export class NotificationsPage extends React.Component {
             for (var i = 0; i < this.notifs.length; i++) {
                 var n = this.notifs[i];
                 var notifKey = "notif-card-" + i;
-                notifsAr.push(<NotifErrand errand={n} navigator={this.navigator} database={this.database} userType={this.user.userType} onRespondBtnClicked={this.onRespondBtnClicked} key={notifKey}/>)
+                notifsAr.push(<NotifErrand errand={n} navigator={this.navigator} database={this.database} userType={this.user.userType} onRespondBtnClicked={this.onRespondBtnClicked} key={notifKey} />)
             }
         }
 
