@@ -3,13 +3,13 @@ Implementation of real time messaging system is done using firebase and DB stub.
 ![alt text](https://i.imgur.com/x0ml8.png "")
 
 
-### Prerequisites
+## Prerequisites
 - Install [NodeJS](https://nodejs.org/en/download/) as required by your machine. This allows you to run `npm` on the command line.
 - Install Apache Cordova for deploying the app for testing: `npm install -g cordova`. You may also need to install webpack globally by running `npm install -g webpack`.
 - Install the other requirements as needed. Follow [this guide](https://cordova.apache.org/docs/en/latest/guide/platforms/android/index.html) if you're building for Android (you may need to install Android Studio) and [this guide](https://cordova.apache.org/docs/en/latest/guide/platforms/ios/index.html) for iOS.
 
 
-### Set up
+## Set up
 - Clone this repository using `git clone` command and switch to firebase branch. Or, you can switch to firebase branch on the top left corner of the page, then download as ZIP file and extract it.
 - Navigate to the project directory and add the Cordova platforms for development: 
 `cordova platform add browser` (if you want to test on browser)
@@ -17,14 +17,14 @@ Implementation of real time messaging system is done using firebase and DB stub.
 Refer [this page](https://cordova.apache.org/docs/en/latest/guide/cli/index.html) (under "Add Platforms") for more detailed instructions on adding platforms.
 - Download the `node_modules` folder [here](https://drive.google.com/open?id=0B8J8t-14cSoqMjBxZUc4RVNCZnc), extract it, and put it into the project directory. You do **not** have to run `npm install` after this.
 
-### Building the application
+## Building the application
 Whenever you make changes to the codes, the JS files have to be rebundled.
 - Build the JS file with this command: `webpack`. This will output a pure JavaScript file, `bundle.js` in `www/dist/` folder.
 - Serve the page on browser: `cordova emulate browser`
 
 (Note: this has not yet been tested on Android/iOS emulator)
 
-### Demooooo
+## Demooooo
 Things to know:
 - There are two users: *Von* (a volunteer) and *Ben* (a beneficiary). You can sign in as either of them with any p/w. (Verification is done using the DB stub. If you enter a name other than Von or Ben, the app will prompt you to try again.)
 - The demonstration is best done with two devices (or two browser windows), with one signed in as the volunteer and one signed in as the beneficiary.
