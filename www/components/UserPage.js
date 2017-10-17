@@ -49,7 +49,6 @@ export class UserPage extends React.Component {
     }
 
     renderToolbar() {
-        // note: repeated codes from LoginPage.js
         if (this.shouldRenderTB) {
             return (<PageToolbar title="User" hasBackBtn={true} />);
         }
@@ -100,12 +99,15 @@ export class UserPage extends React.Component {
 
         //<completederrand showInfo={this.ownProfile} userType={this.user.userType}
         if (pastErrands) {
-            var pastErrandsAr = [];
-            for (var i = 0; i < pastErrands.length; i++) {
-                var pastErrandKey = "past-errand-" + i;
-                pastErrandsAr.push(
-                    <CompletedErrand errand={pastErrands[i]} navigator={this.navigator} database={this.database} ownProfile={this.ownProfile} userType={this.user.userType} key={pastErrandKey}/>
-                )
+            var pastErrandsAr = <span className="center"><br/>No past errands could be found.</span>;
+            if (pastErrands.length > 0) {
+                var pastErrandsAr = [];
+                for (var i = 0; i < pastErrands.length; i++) {
+                    var pastErrandKey = "past-errand-" + i;
+                    pastErrandsAr.push(
+                        <CompletedErrand errand={pastErrands[i]} navigator={this.navigator} database={this.database} ownProfile={this.ownProfile} userType={this.user.userType} key={pastErrandKey} />
+                    )
+                }
             }
             renderedPastEr = <div>
                 <h2>Past errands</h2>

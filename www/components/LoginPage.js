@@ -16,6 +16,8 @@ export class LoginPage extends React.Component {
         this.navigator = props.navigator;
         this.database = new DBController(this.navigator);
 
+        this.verifiedUser = null;
+
         this.state = {
             loggingIn: false,
             username: '',
@@ -56,7 +58,8 @@ export class LoginPage extends React.Component {
     doLogin(result, navigator) {
         // Hide the alert after verification is done
         this.setState({ loggingIn: false }); 
-        if (result) {
+        this.verifiedUser = result;
+        if (result != null) {
             navigator.pushPage({ component: this.createMainPage.bind(this), key: 'main-page' });
         }
         else {
@@ -66,8 +69,8 @@ export class LoginPage extends React.Component {
 
     createMainPage() {
         // get the sample user from the stub for now
-        var sampleUser = (this.state.selectedUserType == 'volunteer') ? this.database.getUser(1, null): this.database.getUser(2, null); 
-        return <MainPage navigator={this.navigator} user={sampleUser} database={this.database}/>;
+        //var sampleUser = (this.state.selectedUserType == 'volunteer') ? this.database.getUser(1, null): this.database.getUser(2, null); 
+        return <MainPage navigator={this.navigator} user={this.verifiedUser} database={this.database}/>;
     }
 
     handleUsernameChange(e) {
@@ -116,8 +119,7 @@ export class LoginPage extends React.Component {
                     <br />
                     <Ons.Input placeholder="Password" modifier="underbar" onChange={this.handlePasswordChange.bind(this)} type="password"></Ons.Input>
                     <br />
-                    {loginOptions}
-                    <br /><br />
+                    <br />
                     <Ons.Button onClick={this.handleLogin.bind(this)}>Login</Ons.Button>
                 </div>
 

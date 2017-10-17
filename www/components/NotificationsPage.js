@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import * as Ons from 'react-onsenui';
 import * as ons from 'onsenui';
 
-import { LoadingSection, NotifErrand } from './utilities/PageUtilities';
+import { LoadingSection, NotifErrand, currentDateTime } from './utilities/PageUtilities';
 
 export class NotificationsPage extends React.Component {
     constructor(props) {
@@ -35,7 +35,7 @@ export class NotificationsPage extends React.Component {
 
     onRespondBtnClicked(respond, errID) {
         if (respond, errID) {
-            var offeredErrand = this.onNoifAccepted(errID);
+            var offeredErrand = this.onNotifAccepted(errID);
             this.database.addNewOffer(offeredErrand);
         }
         else {
@@ -48,15 +48,17 @@ export class NotificationsPage extends React.Component {
         this.setState({ notifsLoaded: true });
     }
 
-    onNoifAccepted(errID) {
+    onNotifAccepted(errID) {
         for (var i = 0; i < this.notifs.length; i++) {
             if (this.notifs[i].errID == errID) {
                 var x = this.notifs[i]; // get the errand
                 this.notifs.splice(i, 1); // remove the errand from notifs
 
+                // ASSIGN THE INFORMATION OF VOLUNTEER WHO OFFERED
                 x.volID = this.user.userID;
                 x.volName = this.user.accName;
-                x.status = "volunteerAccepted";
+                x.status = "offered";
+                x.updatedDate = currentDateTime();
                 this.setState({ notifsLoaded: true }); // refresh the UI
                 return x;
             }

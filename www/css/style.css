@@ -74,6 +74,17 @@ body {
     color:rgb(226, 180, 28);
 }
 
+.ratingBtn button {
+    border: 0px;
+    color:rgb(226, 180, 28);
+    background-color: transparent;
+    outline: none;
+}
+
+.ratingBtn button:hover {
+    cursor:pointer;
+}
+
 /* Thumbtack icon on errand */
 .errandCard .tack {
     float:left;
@@ -147,4 +158,13 @@ errandCard p {
 
 .addErrandTextarea {
     height: 220px;
+}
+
+.addSampleErrand {
+    color: #2abdf2;
+    text-decoration:underline;
+}
+
+.addSampleErrand:hover {
+    cursor: pointer;
 }

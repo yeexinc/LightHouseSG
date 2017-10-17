@@ -17,6 +17,8 @@ export class DBController extends React.Component {
 
         this.newNotifCallback = null;
         this.newOfferCallback = null;
+        this.newAcceptOfferCallback = null;
+        this.newConcludeCallback = null;
 
         console.log("Database initialized");
     }
@@ -46,13 +48,20 @@ export class DBController extends React.Component {
             // If the child is a new errand added by beneficiary, update the notification page
             if (newChild.newNotifErr) {
                 var newNotif = newChild.newNotifErr;
-                thisObj.newNotifCallback(newNotif);
+                if (thisObj.newNotifCallback) thisObj.newNotifCallback(newNotif);
             }
-
-            // If the child is an offer accepted by the volunteer, update the errands page
-            if (newChild.newOfferErr) {
+            else if (newChild.newOfferErr) {
+                // If the child is an offer accepted by the volunteer, update the errands page
                 var newOffer = newChild.newOfferErr;
-                thisObj.newOfferCallback(newOffer);
+                if (thisObj.newOfferCallback) thisObj.newOfferCallback(newOffer);
+            }
+            else if (newChild.newAcceptOffer) {
+                var newAccept = newChild.newAcceptOffer;
+                if (thisObj.newAcceptOfferCallback) thisObj.newAcceptOfferCallback(newAccept);
+            }
+            else if (newChild.newConcludeErr) {
+                var newAccept = newChild.newConcludeErr;
+                if (thisObj.newConcludeCallback) thisObj.newConcludeCallback(newAccept);
             }
         });
 
@@ -80,16 +89,36 @@ export class DBController extends React.Component {
         this.newOfferCallback = callbackFunc;
     }
 
+    // Beneficiary accepts volunteer's offer
+    addAcceptOffer(errand) {
+        this.ref.push({ "newAcceptOffer": errand });
+    }
+
+    registerNewAcceptOfferCallback(callbackFunc) {
+        this.newAcceptOfferCallback = callbackFunc;
+    }
+
+    // Beneficiary concludes an errand
+    addNewConclude(errand) {
+        this.ref.push({ "newConcludeErr": errand });
+    }
+
+    registerNewConcludeCallback(callbackFunc) {
+        this.newConcludeCallback = callbackFunc;
+    }
+
+    appendCompletedErrand(userID, errand) {
+        this.dbStub.appendCompletedErrand(userID, errand);
+    }
+
     logout() {
-        console.log("deleting...", this.ref);
+        console.log("Deleting firebase reference");
         firebase.app("[DEFAULT]").delete();
-        console.log(this.ref);
     }
 
     verifyUser(name, password, callbackFunc) {
         // Do the API call to database here
         var thisObj = this;
-        var result = null;
         var sendData = { "accname": name, "password": password };
         /*
         $.ajax({
@@ -108,7 +137,7 @@ export class DBController extends React.Component {
             }
         });*/
         this.initializeFirebaseEvents();
-        callbackFunc(true, thisObj.navigator);
+        callbackFunc(this.dbStub.placeholderVerification(name), thisObj.navigator);
     }
 
     getUser(userID, callbackFunc, userPage) {
