@@ -11,6 +11,7 @@ export class DBStub extends React.Component {
         this.sampleListedErrands = [];
         this.sampleCompletedErrands = [];
         this.samplePendingErrands = [];
+        this.sampleTags = [];
 
         var sampleVol1 = {
             "userID": 1,
@@ -166,6 +167,14 @@ export class DBStub extends React.Component {
         }
         this.samplePendingErrands.push(samplePendingErrand1);
         this.samplePendingErrands.push(samplePendingErrand2);
+
+        //////////////////////////////////////////////
+        // assume returned from server after API call and ordered by frequency of use
+        this.sampleTags = [
+            "ride", "clean", "paint", "drive", "car", "heavy", "transport", "fix", "repair", "hospital",
+            "clinic", "healthcare", "teach", "explain", "guide", "fetch", "wash", "laundry", "tidy", "plumbing",
+            "sweep", "mop", "garden", "pet", "doctor", "housework", "sort", "chore", "children", "babysit"
+        ]
         console.log("Database stub initialized");
     }
 
@@ -218,5 +227,9 @@ export class DBStub extends React.Component {
     getPendingErrands(userID) {
         // for testing, userID is not used
         return this.samplePendingErrands;
+    }
+
+    getErrandTags() {
+        return this.sampleTags;
     }
 }
