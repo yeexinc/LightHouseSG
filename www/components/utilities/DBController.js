@@ -15,6 +15,7 @@ export class DBController extends React.Component {
 
         this.initializeFirebase();
 
+        this.newErrAddedCallback = null;
         this.newNotifCallback = null;
         this.newOfferCallback = null;
         this.newAcceptOfferCallback = null;
@@ -48,6 +49,7 @@ export class DBController extends React.Component {
             // If the child is a new errand added by beneficiary, update the notification page
             if (newChild.newNotifErr) {
                 var newNotif = newChild.newNotifErr;
+                if (thisObj.newErrAddedCallback) thisObj.newErrAddedCallback(newNotif);
                 if (thisObj.newNotifCallback) thisObj.newNotifCallback(newNotif);
             }
             else if (newChild.newOfferErr) {
@@ -74,6 +76,10 @@ export class DBController extends React.Component {
     // Beneficiary adds a new errand
     addNewNotif(errand) {
         this.ref.push({ "newNotifErr": errand });
+    }
+
+    registerNewErrAddedCallback(callbackFunc) {
+        this.newErrAddedCallback = callbackFunc;
     }
 
     registerNewNotifCallback(callbackFunc) {

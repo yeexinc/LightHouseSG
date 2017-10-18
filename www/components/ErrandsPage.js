@@ -22,6 +22,7 @@ export class ErrandsPage extends React.Component {
         this.state = {
             errandLoaded: false
         }
+        this.database.registerNewErrAddedCallback(this.onNewErrAdded.bind(this));
         this.database.registerNewOfferCallback(this.onNewOfferAdded.bind(this));
         this.database.registerNewAcceptOfferCallback(this.onOfferAccepted.bind(this));
         this.database.registerNewConcludeCallback(this.onErrandConcluded.bind(this));
@@ -144,6 +145,7 @@ export class ErrandsPage extends React.Component {
     }
 
     // Example function (should be removed from this page afterwards)
+    // For convenience / testing only
     addNewNotif() {
         var curTime = currentDateTime();
 
@@ -164,6 +166,12 @@ export class ErrandsPage extends React.Component {
 
         if (this.user.userType == 'beneficiary') {
             this.onErrandLoaded(sampleErrand);
+        }
+    }
+
+    onNewErrAdded(newErrand) {
+        if (this.user.userType == 'beneficiary') {
+            this.onErrandLoaded(newErrand);
         }
     }
 
@@ -205,7 +213,9 @@ export class ErrandsPage extends React.Component {
             }
         }
 
+        // This is for convenience / testing only
         var addSampleErrand = (this.user.userType == 'beneficiary') ? <p onClick={this.addNewNotif.bind(this)} className="addSampleErrand">Add a sample errand</p> : null;
+
         return (
             <Ons.Page>
                 <section className="pageContent">
@@ -213,7 +223,7 @@ export class ErrandsPage extends React.Component {
                         <br /> {ongoingErrandText}
                     {ongoingErrandVar}
                     <br />
-                    {addSampleErrand}
+                    
                 </section>
             </Ons.Page>
         );

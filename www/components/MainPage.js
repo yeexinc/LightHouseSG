@@ -11,7 +11,7 @@ import { SettingsPage } from './SettingsPage';
 import { SearchPage } from './SearchPage';
 import { UserPage } from './UserPage';
 
-import { PageToolbar } from './utilities/PageUtilities';
+import { PageToolbar, currentDateTime } from './utilities/PageUtilities';
 
 export const volunteerTabs = ['Errands', 'Notifications', 'Search', 'User', 'Settings'];
 //export const beneficiaryTabs = ['Errands', 'Add', 'User', 'Settings']
@@ -26,7 +26,6 @@ export class MainPage extends React.Component {
         this.navigator = props.navigator;
         this.database = props.database;
 
-        // user is in a form of json object: (refer createMainPage() in LoginPage.)
         this.user = props.user;
         this.tabs = (this.user.userType == 'volunteer') ? volunteerTabs : beneficiaryTabs;
 
@@ -106,7 +105,7 @@ export class MainPage extends React.Component {
     }
 
     createAddErrandForm() {
-        return <AddErrandForm navigator={this.navigator} database={this.database}/>
+        return <AddErrandForm navigator={this.navigator} database={this.database} user={this.user} />
     }
 
     render() {
@@ -162,6 +161,7 @@ class AddErrandForm extends React.Component {
         super(props);
 
         this.database = props.database;
+        this.user = props.user;
         this.errandTags = [];
         this.tagOptions = [];
 
@@ -175,64 +175,87 @@ class AddErrandForm extends React.Component {
     componentWillMount() {
         this.errandTags = this.database.getErrandTags();
         console.log(this.errandTags);
-        for (var i = 0; i < this.errandTags.length; i++ ) {
-            this.tagOptions.push({value: this.errandTags[i], label: '#' + this.errandTags[i]});
+        for (var i = 0; i < this.errandTags.length; i++) {
+            this.tagOptions.push({ value: this.errandTags[i], label: '#' + this.errandTags[i] });
         }
     }
 
     handleTitle(event) {
-        this.setState({errandTitle: event.target.value});
+        this.setState({ errandTitle: event.target.value });
         console.log("Title: ", event.target.value);
     }
 
     handleDescription(event) {
-        this.setState({description: event.target.value});
+        this.setState({ description: event.target.value });
         console.log("Description: ", event.target.value);
     }
 
     handleTags(value) {
         console.log(value)
-        this.setState({tags: value});
+        this.setState({ tags: value });
     }
 
     // not complete yet
     handleAddTags(event) {
-        if (event.keyCode == 13){
+        if (event.keyCode == 13) {
             console.log(event.target.value);
             this.errandTags.push(event.target.value);
-            this.tagOptions.push({value: event.target.value, label: '#' + event.target.value});
-            this.setState({tags: value});
+            this.tagOptions.push({ value: event.target.value, label: '#' + event.target.value });
+            this.setState({ tags: value });
         }
     }
 
     handleSubmit() {
         var navigator = this.props.navigator;
-        if (this.state.errandTitle != '' && this.state.description != ''){ // && this.state.tags != ''){
+        if (this.state.errandTitle != '' && this.state.description != '') { // && this.state.tags != ''){
             ons.notification.confirm('Are you sure you want to submit this errand?')
-            .then((response) => {
-                if (response === 1) {
-                    console.log("OK!");
-                    var title = this.state.errandTitle;
-                    var description = this.state.description;
-                    var taglist = [];
-                    this.state.tags.map((tag) => {
-                        taglist.push(tag.value);
-                    })
-                    console.log(taglist);
-                    // DBcontroller ajax call to submit errand to server
-                    navigator.popPage();
-                }
-                else {
-                    console.log("CANCEL");
-                }
-            });
+                .then((response) => {
+                    if (response === 1) {
+                        console.log("OK!");
+                        // DBcontroller ajax call to submit errand to server
+                        this.addNewErrand();
+                        navigator.popPage();
+                    }
+                    else {
+                        console.log("CANCEL");
+                    }
+                });
         }
         else {
             ons.notification.alert("Please enter all required Errand information!");
         }
 
     }
-    
+
+    addNewErrand() {
+        // Do the processing here
+        var curTime = currentDateTime();
+
+        var taglist = [];
+        this.state.tags.map((tag) => {
+            taglist.push(tag.label);
+        })
+        console.log(tagStr);
+
+        // For now let's have the tags as just one string, separated by spaces
+        var tagStr = taglist.join(' ');
+
+        var newErrand = {
+            "errID": 1,
+            "beneID": this.user.userID,
+            "beneName": this.user.accName,
+            "volID": null,
+            "status": "listed",
+            "title": this.state.errandTitle,
+            "description": this.state.description,
+            "postedDate": curTime,
+            "tags": tagStr,
+            "beneRate": null,
+            "beneComment": null
+        }
+        this.database.addNewNotif(newErrand);
+    }
+
     renderToolbar() {
         // note: repeated codes from LoginPage.js
         return (
@@ -267,8 +290,8 @@ class AddErrandForm extends React.Component {
                 <ul className="list">
                     <li className="list-item">
                         <div className="list-item__center">
-                            <input type="text" className="addErrandInput text-input" placeholder="Title of the errand" 
-                                onChange={this.handleTitle.bind(this)} maxLength={50}/>
+                            <input type="text" className="addErrandInput text-input" placeholder="Title of the errand"
+                                onChange={this.handleTitle.bind(this)} maxLength={50} />
                         </div>
                     </li>
                 </ul>
@@ -276,7 +299,7 @@ class AddErrandForm extends React.Component {
                 <ul className="list">
                     <li className="list-item">
                         <div className="list-item__center">
-                            <textarea className="addErrandTextarea textarea--transparent" placeholder="Describe what is needed to be done" 
+                            <textarea className="addErrandTextarea textarea--transparent" placeholder="Describe what is needed to be done"
                                 onChange={this.handleDescription.bind(this)} maxLength={400}></textarea>
                         </div>
                     </li>
@@ -290,12 +313,12 @@ class AddErrandForm extends React.Component {
                     options={this.tagOptions}
                     multi={true}
                     onChange={this.handleTags.bind(this)}
-                    /* onInputKeyDown={this.handleAddTags.bind(this)} */
+                /* onInputKeyDown={this.handleAddTags.bind(this)} */
                 />
                 <div className="pageContent center">
                     <Ons.Button onClick={this.handleSubmit.bind(this)}>Submit</Ons.Button>
                 </div>
-                 
+
             </Ons.Page>
         )
     }
