@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Creatable from 'react-select';
+import Select from 'react-select';
 import * as Ons from 'react-onsenui';
 import * as ons from 'onsenui';
 
@@ -174,7 +174,6 @@ class AddErrandForm extends React.Component {
 
     componentWillMount() {
         this.errandTags = this.database.getErrandTags();
-        console.log(this.errandTags);
         for (var i = 0; i < this.errandTags.length; i++) {
             this.tagOptions.push({ value: this.errandTags[i], label: '#' + this.errandTags[i] });
         }
@@ -182,32 +181,24 @@ class AddErrandForm extends React.Component {
 
     handleTitle(event) {
         this.setState({ errandTitle: event.target.value });
-        console.log("Title: ", event.target.value);
     }
 
     handleDescription(event) {
         this.setState({ description: event.target.value });
-        console.log("Description: ", event.target.value);
     }
 
-    handleTags(value) {
-        console.log(value)
-        this.setState({ tags: value });
-    }
-
-    // not complete yet
-    handleAddTags(event) {
-        if (event.keyCode == 13) {
-            console.log(event.target.value);
-            this.errandTags.push(event.target.value);
-            this.tagOptions.push({ value: event.target.value, label: '#' + event.target.value });
-            this.setState({ tags: value });
+    handleTags(taglist) {
+        console.log("taglist: ", taglist);
+        for (var i = 0; i < taglist.length; i++){
+            if (taglist[i].label.charAt(0) != '#')
+                taglist[i].label = '#' + taglist[i].label;
         }
+        this.setState({ tags: taglist });
     }
 
     handleSubmit() {
         var navigator = this.props.navigator;
-        if (this.state.errandTitle != '' && this.state.description != '') { // && this.state.tags != ''){
+        if (this.state.errandTitle != '' && this.state.description != '' && this.state.tags != ''){
             ons.notification.confirm('Are you sure you want to submit this errand?')
                 .then((response) => {
                     if (response === 1) {
@@ -233,12 +224,18 @@ class AddErrandForm extends React.Component {
 
         var taglist = [];
         this.state.tags.map((tag) => {
+            
+            // By right if user creates new tag, serverside should integrate it when errand submitted
+            // This is required to simulate that locally
+            if (!this.errandTags.includes(tag.value)) {
+                this.database.appendNewErrandTag(tag.value);
+            }
             taglist.push(tag.label);
         })
-        console.log(tagStr);
 
         // For now let's have the tags as just one string, separated by spaces
         var tagStr = taglist.join(' ');
+        console.log(tagStr);
 
         var newErrand = {
             "errID": 1,
@@ -306,14 +303,13 @@ class AddErrandForm extends React.Component {
                 </ul>
 
                 <br />
-                <Creatable
+                <Select.Creatable
                     name="tag-input"
                     placeholder="Tags (e.g. ride, clean)"
                     value={this.state.tags}
                     options={this.tagOptions}
                     multi={true}
                     onChange={this.handleTags.bind(this)}
-                /* onInputKeyDown={this.handleAddTags.bind(this)} */
                 />
                 <div className="pageContent center">
                     <Ons.Button onClick={this.handleSubmit.bind(this)}>Submit</Ons.Button>

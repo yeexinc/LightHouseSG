@@ -169,7 +169,7 @@ export class DBStub extends React.Component {
         this.samplePendingErrands.push(samplePendingErrand2);
 
         //////////////////////////////////////////////
-        // assume returned from server after API call and ordered by frequency of use
+        // assume subset of popular tags returned from server after API call, ordered by frequency
         this.sampleTags = [
             "ride", "clean", "paint", "drive", "car", "heavy", "transport", "fix", "repair", "hospital",
             "clinic", "healthcare", "teach", "explain", "guide", "fetch", "wash", "laundry", "tidy", "plumbing",
@@ -231,5 +231,9 @@ export class DBStub extends React.Component {
 
     getErrandTags() {
         return this.sampleTags;
+    }
+
+    appendNewErrandTag(tag){
+        this.sampleTags.push(tag);
     }
 }

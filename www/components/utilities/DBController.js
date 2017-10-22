@@ -199,6 +199,11 @@ export class DBController extends React.Component {
         return this.dbStub.getErrandTags(); 
     }
 
+    // Only used for stub, integrate new user created tag into database
+    appendNewErrandTag(tag){
+        this.dbStub.appendNewErrandTag(tag);
+    }
+
     onSuccess(data) {
         console.log("API call successful. Returning " + data.status);
         return data.status;
