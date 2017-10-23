@@ -44,10 +44,10 @@ export class LoginPage extends React.Component {
         }
 
         // Display the "logging in..." alert
-        this.setState({ loggingIn: true });
-
-        // Uncomment this to do actual API call to the database
-        var result = this.database.verifyUser(this.state.username, this.state.password, this.doLogin.bind(this));
+        this.setState({ loggingIn: true }, function () {
+            // Uncomment this to do actual API call to the database
+            this.database.verifyUser(this.state.username, this.state.password, this.doLogin.bind(this));
+        });
 
         // Comment this out if actual API call is used
         //this.doLogin(true, this.navigator);
@@ -57,14 +57,15 @@ export class LoginPage extends React.Component {
     // successful, this function renders the main page.
     doLogin(result, navigator) {
         // Hide the alert after verification is done
-        this.setState({ loggingIn: false }); 
-        this.verifiedUser = result;
-        if (result != null) {
-            navigator.pushPage({ component: this.createMainPage.bind(this), key: 'main-page' });
-        }
-        else {
-            ons.notification.alert('Your username or password is incorrect. Please try again.');
-        }
+        this.setState({ loggingIn: false }, function () {
+            this.verifiedUser = result;
+            if (result != null) {
+                navigator.pushPage({ component: this.createMainPage.bind(this), key: 'main-page' });
+            }
+            else {
+                ons.notification.alert('Your username or password is incorrect. Please try again.');
+            }
+        }); 
     }
 
     createMainPage() {

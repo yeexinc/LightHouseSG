@@ -124,9 +124,12 @@ export class DBController extends React.Component {
 
     verifyUser(name, password, callbackFunc) {
         // Do the API call to database here
+        var userid;
+        var usertypeid;
         var thisObj = this;
         var sendData = { "accname": name, "password": password };
-        /*
+        
+        // Comment out the whole ajax call if using stub
         $.ajax({
             type: "POST",
             crossDomain: true,
@@ -134,16 +137,76 @@ export class DBController extends React.Component {
             contentType: "application/x-www-form-urlencoded",
             data: sendData,
             success: function (data) {
-                var result = thisObj.onSuccess(data);
-                console.log("Successfully verified user");
-                callbackFunc(result, thisObj.navigator);
+                userid = thisObj.onSuccess(data);
+                if (userid == null){
+                    callbackFunc(userid, thisObj.navigator);
+                }
+                else{
+                    console.log('Userid obtained, retrieve bene/vol id next for: ', userid);
+                    thisObj.initializeFirebaseEvents();
+                    thisObj.gettypeid(userid, thisObj, callbackFunc);
+                }
             },
             error: function () {
                 thisObj.onError();
             }
-        });*/
-        this.initializeFirebaseEvents();
-        callbackFunc(this.dbStub.placeholderVerification(name), thisObj.navigator);
+        });
+
+        // Comment out if using server
+        // this.initializeFirebaseEvents();
+        // callbackFunc(this.dbStub.placeholderVerification(name), thisObj.navigator);
+    }
+
+    gettypeid(userid, thisObj, callbackFunc) {
+        $.ajax({
+            type: "POST",
+            crossDomain: true,
+            url: "http://45.76.189.70:5000/api/v1.0/account/check",
+            contentType: "application/x-www-form-urlencoded",
+            data: userid,
+            success: function (data) {
+                console.log("Successfully checked user account, usertype id is", data);
+                var usertypeid = data;
+                thisObj.getUserDetails(userid, usertypeid, thisObj, callbackFunc);
+            },
+            error: function () {
+                console.log("Account check API call failed");
+            }
+        });
+    }
+
+    getUserDetails(userid, usertypeid, thisObj, callbackFunc) {
+        var usertype = usertypeid.beneid ? "beneficiary" : "volunteer";
+        $.ajax({
+            type: "POST",
+            crossDomain: true,
+            url: "http://45.76.189.70:5000/api/v1.0/" + usertype + "/get/info",
+            contentType: "application/x-www-form-urlencoded",
+            data: usertypeid,
+            success: function (data) {
+                var compatibledata = {
+                    "userID": userid,
+                    "accName": data.username,
+                    "userType": usertype,
+                    "email": data.email,
+                    "postalCode": data.postalcode,
+                    "phoneNumber": data.phonenum,
+                    "createdDate": "dd/mm/yy",
+                    "organization": data.organization,
+                    "gender": data.gender,
+                    "completedErrands": []
+                };
+
+                callbackFunc(compatibledata, thisObj.navigator);
+                console.log("Successfully retrieved details for account: ", data); 
+                console.log("After processing: ", compatibledata);                   
+            },
+            error: function () {
+                console.log("Details retrieval API call failed");
+            }
+        });
+
+
     }
 
     getUser(userID, callbackFunc, userPage) {
@@ -205,8 +268,14 @@ export class DBController extends React.Component {
     }
 
     onSuccess(data) {
-        console.log("API call successful. Returning " + data.status);
-        return data.status;
+        if (data.status == false){
+            console.log("API call successful. User unregistered");
+            return null;
+        }
+        else{
+            console.log("API call successful. User exists");
+            return data;
+        }
     }
 
     onError() {
