@@ -192,6 +192,8 @@ class AddErrandForm extends React.Component {
         for (var i = 0; i < taglist.length; i++){
             if (taglist[i].label.charAt(0) != '#')
                 taglist[i].label = '#' + taglist[i].label;
+            if (taglist[i].value.charAt(0) == '#')
+                taglist[i].value = taglist[i].value.substr(1);
         }
         this.setState({ tags: taglist });
     }
@@ -251,6 +253,17 @@ class AddErrandForm extends React.Component {
             "beneComment": null
         }
         this.database.addNewNotif(newErrand);
+
+        // For server errand integration, i'm assuming tags are stored without #
+        var newServerErrand = {
+            "beneid" : this.user.usertypeID,
+            "title": this.state.errandTitle,
+            "description": this.state.description,
+            "tag1": this.state.tags[0].value,
+            "tag2": this.state.tags[1] ? this.state.tags[1].value : "",
+            "tag3": this.state.tags[2] ? this.state.tags[2].value : ""
+        }
+        // this.database.addNewErrand(newServerErrand);
     }
 
     renderToolbar() {

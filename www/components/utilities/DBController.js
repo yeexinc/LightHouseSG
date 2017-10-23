@@ -78,6 +78,24 @@ export class DBController extends React.Component {
         this.ref.push({ "newNotifErr": errand });
     }
 
+    // For server integration
+    addNewErrand(errand) {
+        $.ajax({
+            type: "POST",
+            crossDomain: true,
+            url: "http://45.76.189.70:5000/api/v1.0/errands/insert/new",
+            contentType: "application/x-www-form-urlencoded",
+            data: errand,
+            success: function (data) {
+                var errid = data;
+                console.log("Errand submitted to server with ID: ", errid);
+            },
+            error: function () {
+                console.log("An error occured with post new errand API call");
+            }
+        });
+    }
+
     registerNewErrAddedCallback(callbackFunc) {
         this.newErrAddedCallback = callbackFunc;
     }
@@ -185,7 +203,8 @@ export class DBController extends React.Component {
             data: usertypeid,
             success: function (data) {
                 var compatibledata = {
-                    "userID": userid,
+                    "userID": userid.userid,
+                    "usertypeID": usertypeid.beneid ? usertypeid.beneid : usertypeid.volid,
                     "accName": data.username,
                     "userType": usertype,
                     "email": data.email,
