@@ -297,7 +297,7 @@ class AddErrandForm extends React.Component {
                     <li className="list-item">
                         <div className="list-item__center">
                             <textarea className="addErrandTextarea textarea--transparent" placeholder="Describe what is needed to be done"
-                                onChange={this.handleDescription.bind(this)} maxLength={400}></textarea>
+                                onChange={this.handleDescription.bind(this)} rows="6" maxLength={400}></textarea>
                         </div>
                     </li>
                 </ul>
