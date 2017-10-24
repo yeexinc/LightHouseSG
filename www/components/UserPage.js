@@ -91,7 +91,7 @@ export class UserPage extends React.Component {
         var tags = (this.user.tags) ? <div className="userInfo tags">
             <h2>Associated tags</h2>{this.user.tags}</div> : null;
 
-        var rating = (this.user.rating) ? <Rating rating={this.user.rating} /> : null;
+        var rating = (this.ownProfile && this.user.rating) ? <Rating rating={this.user.rating} /> : null;
 
         /////////////////////////// Past errands //////
         var pastErrands = this.user.completedErrands;

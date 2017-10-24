@@ -15,7 +15,7 @@ Implementation of real time messaging system is done using firebase and DB stub.
 `cordova platform add browser` (if you want to test on browser)
 `cordova platform add android` (If you want to test on android emulator)
 Refer [this page](https://cordova.apache.org/docs/en/latest/guide/cli/index.html) (under "Add Platforms") for more detailed instructions on adding platforms.
-- Download the `node_modules` folder [here](https://drive.google.com/open?id=0B8J8t-14cSoqMjBxZUc4RVNCZnc), extract it, and put it into the project directory. You do **not** have to run `npm install` after this.
+- Run `npm install` to install the required modules.
 
 ## Building the application
 Whenever you make changes to the codes, the JS files have to be rebundled.
