@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import * as Ons from 'react-onsenui';
 import * as ons from 'onsenui';
 
-import { PendingErrand } from './utilities/PageUtilities';
+import { PendingErrand, currentDateTime } from './utilities/PageUtilities';
 
 export class SearchPage extends React.Component {
     constructor(props) {
@@ -13,26 +13,41 @@ export class SearchPage extends React.Component {
         this.database = props.database;
         this.navigator = props.navigator;
 
+        this.onRespondBtnClicked = this.onRespondBtnClicked.bind(this);
+
         this.errands = this.database.getPendingErrands(0);
-        this.pendingErrands = [];
-        for (var i = 0; i < this.errands.length; i++) {
-            var y = this.errands[i];
-            var searchKey = "search-card-" + i;
-            this.pendingErrands.push(<PendingErrand errand={y} navigator={this.navigator} database={this.database} userType={this.user.userType} onRespondBtnClicked={this.onRespondBtnClicked} key={searchKey} />)
-        }
 
         this.state = {
             errandsLoaded: false,
-            searchInput: ''
+            searchInput: '',
+            errandsKey: 0
         }
     }
 
-    onRespondBtnClicked(respond) {
-        if (respond) {
-            console.log("The pending request has been accepted.");
+    onRespondBtnClicked(respond, errID) {
+        if (respond, errID) {
+            var offeredErrand = this.onErrandAccepted(errID);
+            this.database.addNewOffer(offeredErrand);
         }
         else {
             console.log("The pending request has been rejected.");
+        }
+    }
+
+    onErrandAccepted(errID) {
+        for (var i = 0; i < this.errands.length; i++) {
+            if (this.errands[i].errID == errID) {
+                var x = this.errands[i]; // get the errand
+                this.errands.splice(i, 1); // remove the errand from the search list
+
+                // assign information
+                x.volID = this.user.userID;
+                x.volName = this.user.accName;
+                x.status = "offered";
+                x.updatedDate = currentDateTime();
+                this.setState({ errandsLoaded: true }); // refresh the UI
+                return x;
+            }
         }
     }
 
@@ -42,20 +57,30 @@ export class SearchPage extends React.Component {
 
     filterSearchResults(input) {
         if (input == '') {
-            return this.pendingErrands;
+            return this.getRenderedErrands(this.errands);
         }
 
-        var searchResultAr = [];
-
-        // Filter the search results here
+        var searchResultsAr = [];
         for (var i = 0; i < this.errands.length; i++) {
             var x = this.errands[i];
             var searchKey = "search-card-" + i;
             if (this.contains(x.title, input) || this.contains(x.tags, input)) {
-                searchResultAr.push(<PendingErrand errand={x} navigator={this.navigator} database={this.database} userType={this.user.userType} onRespondBtnClicked={this.onRespondBtnClicked} key={searchKey} />)
+                searchResultsAr.push(x);
             }
         }
-        return searchResultAr;
+        var renderedResults = this.getRenderedErrands(searchResultsAr);
+        return renderedResults;
+    }
+
+    getRenderedErrands(errands) {
+        var pendingErrands = [];
+        for (var i = 0; i < errands.length; i++) {
+            var y = errands[i];
+            var searchKey = "search-card-" + this.state.errandsKey;
+            this.state.errandsKey++;
+            pendingErrands.push(<PendingErrand errand={y} navigator={this.navigator} database={this.database} userType={this.user.userType} onRespondBtnClicked={this.onRespondBtnClicked} key={searchKey} />)
+        }
+        return pendingErrands;
     }
 
     contains(string1, string2) {

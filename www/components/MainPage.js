@@ -48,6 +48,10 @@ export class MainPage extends React.Component {
         );
     }
 
+    openErrandsPage() {
+        if (this.state.index != 0) this.setState({ index: 0 });
+    }
+
     renderTabs() {
         var t = [];
 
@@ -55,7 +59,7 @@ export class MainPage extends React.Component {
             switch (this.tabs[i]) {
                 case 'Errands':
                     t.push({
-                        content: <ErrandsPage user={this.user} key='errands-page' navigator={this.navigator} database={this.database} />,
+                        content: <ErrandsPage user={this.user} key='errands-page' navigator={this.navigator} database={this.database} openErrandsPage={this.openErrandsPage.bind(this)} />,
                         tab: <Ons.Tab label='Errands' icon='fa-home' key='errands-page-key' />
                     });
                     break;
@@ -189,7 +193,7 @@ class AddErrandForm extends React.Component {
 
     handleTags(taglist) {
         console.log("taglist: ", taglist);
-        for (var i = 0; i < taglist.length; i++){
+        for (var i = 0; i < taglist.length; i++) {
             if (taglist[i].label.charAt(0) != '#')
                 taglist[i].label = '#' + taglist[i].label;
             if (taglist[i].value.charAt(0) == '#')
@@ -200,7 +204,7 @@ class AddErrandForm extends React.Component {
 
     handleSubmit() {
         var navigator = this.props.navigator;
-        if (this.state.errandTitle != '' && this.state.description != '' && this.state.tags != ''){
+        if (this.state.errandTitle != '' && this.state.description != '' && this.state.tags != '') {
             ons.notification.confirm('Are you sure you want to submit this errand?')
                 .then((response) => {
                     if (response === 1) {
@@ -226,7 +230,7 @@ class AddErrandForm extends React.Component {
 
         var taglist = [];
         this.state.tags.map((tag) => {
-            
+
             // By right if user creates new tag, serverside should integrate it when errand submitted
             // This is required to simulate that locally
             if (!this.errandTags.includes(tag.value)) {
@@ -256,7 +260,7 @@ class AddErrandForm extends React.Component {
 
         // For server errand integration, i'm assuming tags are stored without #
         var newServerErrand = {
-            "beneid" : this.user.usertypeID,
+            "beneid": this.user.usertypeID,
             "title": this.state.errandTitle,
             "description": this.state.description,
             "tag1": this.state.tags[0].value,

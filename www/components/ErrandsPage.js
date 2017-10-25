@@ -19,6 +19,8 @@ export class ErrandsPage extends React.Component {
         this.onRespondBtnClicked = this.onRespondBtnClicked.bind(this);
         this.onConcludeBtnClicked = this.onConcludeBtnClicked.bind(this);
 
+        this.openErrandsPage = this.props.openErrandsPage;
+
         this.state = {
             errandLoaded: false
         }
@@ -49,6 +51,7 @@ export class ErrandsPage extends React.Component {
         if (offer) {
             if (this.user.userType == 'volunteer') {
                 this.ongoingErrands = [offer];
+                this.openErrandsPage();
             }
             else {
                 // For beneficiaries, go through the current ongoing errands and update it
