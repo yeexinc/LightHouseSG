@@ -144,6 +144,7 @@ export class DBController extends React.Component {
         // Do the API call to database here
         var userid;
         var usertypeid;
+        var dbstubuserdata;
         var thisObj = this;
         var sendData = { "accname": name, "password": password };
         
@@ -162,7 +163,9 @@ export class DBController extends React.Component {
                 else{
                     console.log('Userid obtained, retrieve bene/vol id next for: ', userid);
                     thisObj.initializeFirebaseEvents();
-                    thisObj.gettypeid(userid, thisObj, callbackFunc);
+                    dbstubuserdata = thisObj.dbStub.placeholderVerification(name);
+                    thisObj.gettypeid(userid, dbstubuserdata, thisObj, callbackFunc);
+                    
                 }
             },
             error: function () {
@@ -175,7 +178,7 @@ export class DBController extends React.Component {
         // callbackFunc(this.dbStub.placeholderVerification(name), thisObj.navigator);
     }
 
-    gettypeid(userid, thisObj, callbackFunc) {
+    gettypeid(userid, dbstubuserdata, thisObj, callbackFunc) {
         $.ajax({
             type: "POST",
             crossDomain: true,
@@ -185,7 +188,7 @@ export class DBController extends React.Component {
             success: function (data) {
                 console.log("Successfully checked user account, usertype id is", data);
                 var usertypeid = data;
-                thisObj.getUserDetails(userid, usertypeid, thisObj, callbackFunc);
+                thisObj.getUserDetails(userid, usertypeid, dbstubuserdata, thisObj, callbackFunc);
             },
             error: function () {
                 console.log("Account check API call failed");
@@ -193,8 +196,9 @@ export class DBController extends React.Component {
         });
     }
 
-    getUserDetails(userid, usertypeid, thisObj, callbackFunc) {
+    getUserDetails(userid, usertypeid, dbstubuserdata, thisObj, callbackFunc) {
         var usertype = usertypeid.beneid ? "beneficiary" : "volunteer";
+        // var idtype = usertypeid.beneid ? "beneID" : "volID";
         $.ajax({
             type: "POST",
             crossDomain: true,
@@ -202,23 +206,24 @@ export class DBController extends React.Component {
             contentType: "application/x-www-form-urlencoded",
             data: usertypeid,
             success: function (data) {
-                var compatibledata = {
-                    "userID": userid.userid,
-                    "usertypeID": usertypeid.beneid ? usertypeid.beneid : usertypeid.volid,
-                    "accName": data.username,
-                    "userType": usertype,
-                    "email": data.email,
-                    "postalCode": data.postalcode,
-                    "phoneNumber": data.phonenum,
-                    "createdDate": "dd/mm/yy",
-                    "organization": data.organization,
-                    "gender": data.gender,
-                    "completedErrands": []
-                };
+                // var compatibledata = {
+                //     "userID": userid.userid,
+                //     "accName": dbstubuserdata.accName,
+                //     "userType": usertype,
+                //     "email": data.email,
+                //     "postalCode": data.postalcode,
+                //     "phoneNumber": data.phonenum,
+                //     "createdDate": "dd/mm/yy",
+                //     "organization": data.organization,
+                //     "gender": data.gender,
+                //     "completedErrands": []
+                // };
+                // compatibledata[idtype] = usertypeid.beneid ? usertypeid.beneid : usertypeid.volid;
 
-                callbackFunc(compatibledata, thisObj.navigator);
                 console.log("Successfully retrieved details for account: ", data); 
-                console.log("After processing: ", compatibledata);                   
+                // console.log("After processing: ", compatibledata);            
+                // console.log("DB stub: ", dbstubuserdata);  
+                callbackFunc(dbstubuserdata, thisObj.navigator);     
             },
             error: function () {
                 console.log("Details retrieval API call failed");

@@ -44,7 +44,8 @@ export class NotificationsPage extends React.Component {
     }
 
     onNewNotifsAdded(newErrand) {
-        this.notifs.push(newErrand);
+        if (this.user.accName == "vcoder")
+            this.notifs.push(newErrand);
         this.setState({ notifsLoaded: true });
     }
 

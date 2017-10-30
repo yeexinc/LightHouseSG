@@ -13,9 +13,26 @@ export class DBStub extends React.Component {
         this.samplePendingErrands = [];
         this.sampleTags = [];
 
+        var sampleVol2 = {
+            "userID": 24,
+            "volID": 10,
+            "accName": "vcoder2",
+            "userType": "volunteer",
+            "email": "vvvv@lighthousesg.com",
+            "postalCode": "23456",
+            "phoneNumber": "+6537463778",
+            "createdDate": "12 Oct 2017",
+            "organization": "Nanyang Technological University",
+            "expertise": "cleaning, driving, painting",
+            "tags": "#drive #house #paint",
+            "gender": "Male",
+            "rating": 4.0,
+            "completedErrands": []
+        }
         var sampleVol1 = {
-            "userID": 1,
-            "accName": "Von",
+            "userID": 3,
+            "volID": 2,
+            "accName": "vcoder",
             "userType": "volunteer",
             "email": "aaaa@lighthousesg.com",
             "postalCode": "12345",
@@ -30,8 +47,9 @@ export class DBStub extends React.Component {
         }
 
         var sampleBene1 = {
-            "userID": 2,
-            "accName": "Ben",
+            "userID": 1, 
+            "beneID": 1,
+            "accName": "bcoder",
             "userType": "beneficiary",
             "email": "benedict@lighthousesg.com",
             "postalCode": "03764",
@@ -43,7 +61,7 @@ export class DBStub extends React.Component {
         }
 
         var sampleBene2 = {
-            "userID": 3,
+            "userID": 2,
             "accName": "Pikachu",
             "userType": "beneficiary",
             "email": "gottacatchthemall@lighthousesg.com",
@@ -68,14 +86,15 @@ export class DBStub extends React.Component {
             "completedErrands": []
         }
         this.sampleUsers.push(sampleVol1);
+        this.sampleUsers.push(sampleVol2);
         this.sampleUsers.push(sampleBene1);
         this.sampleUsers.push(sampleBene2);
         this.sampleUsers.push(sampleBene3);
 
         var sampleErrand1 = {
             "errID": 1,
-            "beneID": 2,
-            "beneName": "Ben",
+            "beneID": 1,
+            "beneName": "bcoder",
             "volID": null,
             "status": "listed",
             "title": "House Repainting",
@@ -90,8 +109,8 @@ export class DBStub extends React.Component {
         ///////////////////////////////////////////
         var sampleListedErrand1 = {
             "errID": 2,
-            "beneID": 2,
-            "beneName": "Ben",
+            "beneID": 1,
+            "beneName": "bcoder",
             "volID": null,
             "status": "listed",
             "title": "CZ3007 Assignment",
@@ -106,10 +125,10 @@ export class DBStub extends React.Component {
         ///////////////////////////////////////////
         var sampleCompletedErrand1 = {
             "errID": 3,
-            "beneID": 2,
-            "beneName": "Ben",
-            "volID": 1,
-            "volName": "Von",
+            "beneID": 1,
+            "beneName": "bcoder",
+            "volID": 2,
+            "volName": "vcoder",
             "status": "completed",
             "title": "Ride to shop",
             "description": "I'm running out of groceries and in need of transport to the nearest grocery shop in my area. The nearest shop is too far to walk to.",
@@ -124,8 +143,8 @@ export class DBStub extends React.Component {
             "errID": 4,
             "beneID": 3,
             "beneName": "Pikachu",
-            "volID": 1,
-            "volName": "Von",
+            "volID": 2,
+            "volName": "vcoder",
             "status": "completed",
             "title": "Catch the wild Pikachu",
             "description": "I'm playing Pokemon Go and there's no Pikachu near my area. Can someone please give me a ride to catch my all-time favourite Pokemon :( i need it for my life",
@@ -180,17 +199,16 @@ export class DBStub extends React.Component {
 
     placeholderVerification(name) {
         // verification for a sample Volunteer and Beneficiary only
-        if (name.toLowerCase() == this.sampleUsers[0].accName.toLowerCase()) { // for volunteer (Von)
-            return this.getUser(1);
+        for (var i = 0; i < this.sampleUsers.length; i++){
+            if (name.toLowerCase() == this.sampleUsers[i].accName.toLowerCase()) {
+                return this.getUser(this.sampleUsers[i].userID, i);
+            }
         }
-        else if (name.toLowerCase() == this.sampleUsers[1].accName.toLowerCase()) { // for beneficiary (Ben)
-            return this.getUser(2);
-        }
-        else return null;
+        return null;
     }
 
-    getUser(userID) {
-        var user = this.sampleUsers[userID - 1];
+    getUser(userID, index) {
+        var user = this.sampleUsers[index];
         if (user.completedErrands.length > 0) {
             // if the user's completed errands have already been filled
             return user;
@@ -206,7 +224,14 @@ export class DBStub extends React.Component {
 
     // TODO: after beneficiary has concluded the errand
     appendCompletedErrand(userID, errand) {
-        this.sampleUsers[userID - 1].completedErrands.push(errand);
+        var index = 0;
+        for (var i = 0; i < this.sampleUsers.length; i++){
+            if (this.sampleUsers[i].userID == userID) {
+                break;
+            }
+            index++;
+        }
+        this.sampleUsers[index].completedErrands.push(errand);
     }
 
     getOngoingErrand(userID) {
