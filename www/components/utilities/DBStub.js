@@ -13,6 +13,23 @@ export class DBStub extends React.Component {
         this.samplePendingErrands = [];
         this.sampleTags = [];
 
+        var sampleVol1 = {
+            "userID": 3,
+            "volID": 2,
+            "accName": "vcoder",
+            "userType": "volunteer",
+            "email": "aaaa@lighthousesg.com",
+            "postalCode": "12345",
+            "phoneNumber": "+6537463777",
+            "createdDate": "12 Oct 2017",
+            "organization": "Nanyang Technological University",
+            "expertise": "cleaning, driving",
+            "tags": "#drive #house",
+            "gender": "Male",
+            "rating": 5.0,
+            "completedErrands": []
+        }
+
         var sampleVol2 = {
             "userID": 24,
             "volID": 10,
@@ -29,19 +46,20 @@ export class DBStub extends React.Component {
             "rating": 4.0,
             "completedErrands": []
         }
-        var sampleVol1 = {
-            "userID": 3,
-            "volID": 2,
-            "accName": "vcoder",
+
+        var sampleVol3 = {
+            "userID": 28,
+            "volID": 11,
+            "accName": "vcoder3",
             "userType": "volunteer",
-            "email": "aaaa@lighthousesg.com",
-            "postalCode": "12345",
-            "phoneNumber": "+6537463777",
-            "createdDate": "12 Oct 2017",
+            "email": "qqq@lighthousesg.com",
+            "postalCode": "34567",
+            "phoneNumber": "+6537463779",
+            "createdDate": "11 Nov 2017",
             "organization": "Nanyang Technological University",
-            "expertise": "cleaning, driving",
-            "tags": "#drive #house",
-            "gender": "Male",
+            "expertise": "cleaning, washing, plumbing",
+            "tags": "#cleanm #wash #plumbing",
+            "gender": "Female",
             "rating": 5.0,
             "completedErrands": []
         }
@@ -87,6 +105,7 @@ export class DBStub extends React.Component {
         }
         this.sampleUsers.push(sampleVol1);
         this.sampleUsers.push(sampleVol2);
+        this.sampleUsers.push(sampleVol3);
         this.sampleUsers.push(sampleBene1);
         this.sampleUsers.push(sampleBene2);
         this.sampleUsers.push(sampleBene3);
