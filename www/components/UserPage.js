@@ -19,12 +19,18 @@ export class UserPage extends React.Component {
         // If there is no user object passed in, we have to load the user from the database later in componentWillMount()
         if (this.user == null) {
             this.state = {
-                userLoaded: false
+                userLoaded: false,
+                showUserInfoEditForm: false,
+                changedPhoneNumber: "",
+                changedEmail: ""
             }
         }
         else {
             this.state = {
-                userLoaded: true
+                userLoaded: true,
+                showUserInfoEditForm: false,
+                changedPhoneNumber: "",
+                changedEmail: ""
             }
         }
 
@@ -53,6 +59,38 @@ export class UserPage extends React.Component {
             return (<PageToolbar title="User" hasBackBtn={true} />);
         }
         else return null;
+    }
+
+    handleShowUserInfoEdit() {
+        this.setState({showUserInfoEditForm: true});
+    }
+
+    handleHideUserInfoEdit() {
+        this.setState({showUserInfoEditForm: false});
+    }
+
+    handlePhoneNumberChange(e) {
+        this.setState({ changedPhoneNumber: e.target.value });
+    }
+
+    handleEmailChange(e) {
+        this.setState({ changedEmail: e.target.value });
+    }
+
+    handleConfirmUserInfoEdit() {
+        ons.notification.confirm('Are you sure you want to edit your info?')
+        .then((response) => {
+            if (response === 1) {
+                console.log("OK!");
+                this.user.phoneNumber = this.state.changedPhoneNumber;
+                this.user.email = this.state.changedEmail;
+                this.handleHideUserInfoEdit();
+                ons.notification.alert("User info edit confirmed!");
+            }
+            else {
+                console.log("CANCEL");
+            }
+        });
     }
 
     render() {
@@ -84,6 +122,17 @@ export class UserPage extends React.Component {
 
         var phoneNumber = (this.user.phoneNumber) ? <div className="userInfo">
             <h2>Phone number</h2>{this.user.phoneNumber}</div> : null;
+
+        var phoneNumberEdit = (this.user.phoneNumber && this.state.showUserInfoEditForm) ? <div>
+            <Ons.Input placeholder="New Phone Number" modifier="underbar" onChange={this.handlePhoneNumberChange.bind(this)}></Ons.Input>
+            </div> : null;
+
+        var email = (this.user.email) ? <div className="userInfo">
+            <h2>Email</h2>{this.user.email}</div> : null;
+
+        var emailEdit = (this.user.email && this.state.showUserInfoEditForm) ? <div>
+            <Ons.Input placeholder="New Email" modifier="underbar" onChange={this.handleEmailChange.bind(this)}></Ons.Input>
+            </div> : null;
 
         var organization = (this.user.organization) ? <div className="userInfo">
             <h2>Organization</h2>{this.user.organization}</div> : null;
@@ -118,13 +167,24 @@ export class UserPage extends React.Component {
         return (
             <Ons.Page renderToolbar={this.renderToolbar.bind(this)}>
                 <section style={{ margin: '16px' }} className="userPage">
-                    <h1>{this.user.accName}</h1>
+                    <h1>
+                        {this.user.accName}
+                        {this.state.showUserInfoEditForm ? <div style={{float: 'right'}}>
+                            <Ons.Button style={{marginRight: '6px'}} onClick={this.handleHideUserInfoEdit.bind(this)}><i className="fa fa-times" /> Cancel</Ons.Button>
+                            <Ons.Button onClick={this.handleConfirmUserInfoEdit.bind(this)}><i className="fa fa-check" /> Confirm</Ons.Button>
+                            </div>: <Ons.Button style={{float: 'right'}} onClick={this.handleShowUserInfoEdit.bind(this)}><i className="fa fa-pencil" /> Edit Info</Ons.Button>}
+                    </h1>
                     {rating}
                     <h2>{this.user.userType}</h2>
                     <hr></hr>
                     {postalCode}
                     {expertise}
                     {phoneNumber}
+                    {phoneNumberEdit}
+                    {phoneNumberEdit ? <div><br /><br /></div> : null}
+                    {email}
+                    {emailEdit}
+                    {emailEdit ? <div><br /><br /></div> : null}
                     {organization}
                     {tags}
 

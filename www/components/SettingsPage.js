@@ -22,7 +22,6 @@ export class SettingsPage extends React.Component {
     }
 
     handleConfirmChangePassword() {
-        console.log("here");
         ons.notification.confirm('Are you sure you want to change your password?')
         .then((response) => {
             if (response === 1) {
@@ -46,8 +45,8 @@ export class SettingsPage extends React.Component {
             <Ons.Input placeholder="Confirm New Password" modifier="underbar" type="password"></Ons.Input>
             <br />
             <br />
-            <Ons.Button style={{margin: '6px', marginLeft: '0px'}} onClick={this.handleHideChangePassword.bind(this)}>Cancel</Ons.Button>
-            <Ons.Button style={{margin: '6px'}} onClick={this.handleConfirmChangePassword.bind(this)}>Confirm</Ons.Button>
+            <Ons.Button style={{margin: '6px', marginLeft: '0px'}} onClick={this.handleHideChangePassword.bind(this)}><i className="fa fa-times" /> Cancel</Ons.Button>
+            <Ons.Button style={{margin: '6px'}} onClick={this.handleConfirmChangePassword.bind(this)}><i className="fa fa-check" /> Confirm</Ons.Button>
         </div>
         );
     }
