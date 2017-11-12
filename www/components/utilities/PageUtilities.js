@@ -229,6 +229,10 @@ export class AcceptedErrand extends AccRejErrand {
         this.acceptBtn = <Ons.Button onClick={this.openConcludeErrandForm.bind(this)}>
             Conclude errand
         </Ons.Button>
+
+        this.renegeBtn = <span className="respondBtnContainer red" onClick={this.onRenegeButtonClicked.bind(this)}>
+        <i className="fa fa-times-circle fa-2x"></i>
+        <br />Renege offer</span>;
     }
 
     // Overwrite the function in parent class
@@ -246,6 +250,18 @@ export class AcceptedErrand extends AccRejErrand {
             });
     }
 
+    onRenegeButtonClicked() {
+        ons.notification.confirm('Are you sure you want to renege on this offer?')
+            .then((response) => {
+                if (response === 1) {
+                    console.log("Offer reneged");
+                }
+                else {
+                    console.log("Cancelled");
+                }
+            });
+    }
+
     openConcludeErrandForm() {
         this.navigator.pushPage({ component: this.createConcludeErrandForm.bind(this), key: 'conclude-errand-form' });
     }
@@ -256,21 +272,23 @@ export class AcceptedErrand extends AccRejErrand {
 
     render() {
         var userLink = this.beneName;
-        var showConcludeButton = false;
 
-        if (this.props.userType == 'beneficiary') {
-            showConcludeButton = true;
-        }
+        var concludeButton = null;
 
         if (this.navigator != null && this.database != null) {
             if (this.props.userType == 'beneficiary') { // If the logged in user is a beneficiary
                 userLink = <p className="postedDate">
                     <span className="green">Accepted</span> by <UserLink userID={this.props.volID} userName={this.props.volName} navigator={this.navigator} database={this.database} /> on {this.errand.updatedDate}</p>;
-                showConcludeButton = true; // Show the accept/reject buttons
+                concludeButton = <div className="center">
+                    {this.acceptBtn}
+                </div>;
             }
             else { // If the user a volunteer,
                 userLink = <p className="postedDate">
                     Submitted by <UserLink userID={this.beneID} userName={this.beneName} navigator={this.navigator} database={this.database} /> on {this.errand.postedDate}</p>;
+                concludeButton = <div className="center">
+                    {this.renegeBtn}
+                </div>;
             }
         }
 
@@ -293,11 +311,6 @@ export class AcceptedErrand extends AccRejErrand {
                 <p className="tags">{this.errand.tags}</p>
             </div>;
         }
-
-        var concludeButton = (showConcludeButton) ?
-            <div className="center">
-                {this.acceptBtn}
-            </div> : null;
 
         return (
             <Ons.Card>
